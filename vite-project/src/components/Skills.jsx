@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState } from "react";
 import "./Skills.css";
 
 
@@ -18,22 +18,29 @@ const skills = [
 ];
 
 const Skills = () => {
-  return (
-    <section id="skills" className="skills">
-        <h2 className="skills-title">Skills</h2>
-        <ul className="skills-grid" role="list">
-           {skills.map(({ name, cls, url }) => (
-            <li
-                key={name}
-                className="skill-card"
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = "scale(1.1)";
-                  e.currentTarget.style.color = "#9da4a3";
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = "scale(1)";                }}
-        > 
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  return (
+    <section 
+      id="skills" 
+      className="skills"
+      style={{ padding: isMobile ? "60px 16px" : "80px 20px", }}
+    >
+        <h2 
+        className="skills-title" 
+        style={{ fontSize: isMobile ? "2rem" : "3rem", marginBottom: isMobile ? "24px" : "40px"}}
+        >
+          Skills
+        </h2>
+        <ul className="skills-grid" role="list" style={{ gap: isMobile ? "12px" : "18px" }}>
+           {skills.map(({ name, cls, url }) => (
+            <li key={name} className="skill-card">
           <a
             href={url}
             target="_blank"
@@ -41,8 +48,10 @@ const Skills = () => {
             className="skill-link"
             aria-label={`Learn more about ${name}`}
           >
-            <i className={cls} style={{ fontSize: 44 }} aria-hidden="true"></i>
-            <span className="skill-label">{name}</span>
+            <i className={cls} style={{ fontSize: isMobile ? 32 : 44 }} aria-hidden="true"></i>
+            <span className="skill-label" style={{ fontSize : isMobile ? "0.85rem" : "1rem" }}>
+              {name}
+            </span>
           </a>
           </li>
         ))}

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [section, setSection] = useState("home");
+    const isMobile = window.innerWidth < 768;
     
   useEffect(() => {
     const handleScroll = () => {
@@ -39,8 +40,8 @@ const Navbar = () => {
         boxSizing: "border-box",
         display: "flex",
         justifyContent: "flex-end",
-        gap: "20px",
-        padding: scrolled ? "10px 30px" : "15px 30px",
+        gap: isMobile ? "12px" : "20px",
+        padding: scrolled ? (isMobile ? "10px 16px" : "10px 30px") : (isMobile ? "12px 16px" : "15px 30px"),
         zIndex: 1000,
         backgroundColor: section === "home" 
           ? (scrolled ? "rgba(10, 14, 26, 0.75)" : "transparent")
@@ -56,9 +57,9 @@ const Navbar = () => {
         color: section === "home" ? "#ffffffff" : "#444",
         textDecoration: "none",
         fontWeight: 600,
-        fontSize: "1.05rem",
+        fontSize: isMobile ? "0.9rem" : "1.05rem",
         fontFamily: "'DM Mono', 'Courier New', monospace",
-        padding: "6px 10px",
+        padding: isMobile ? "4px 8px" : "6px 10px",
         borderRadius: "6px",
         transition: "color 160ms ease, background-color 160ms ease",    
   };
@@ -67,7 +68,7 @@ const Navbar = () => {
     if (section === "home") {
         e.target.style.color = enter ? "#a6a8aeff" : "#9ee7d7";
         e.target.style.backgroundColor = enter ? "rgba(255,255,255,0.08)" : "transparent";
-    }   else {
+    }  else {
         e.target.style.color = enter ? "#333" : "#444";
         e.target.style.backgroundColor = enter ? "rgba(0,0,0,0.04)" : "transparent";
     }

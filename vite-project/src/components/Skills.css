@@ -1,13 +1,11 @@
 .skills {
-  padding: 80px 20px;
   scroll-margin-top: 80px;
 }
 
 .skills-title {
-    font-size: 3rem;
     color: #6c9a57ff;
-    margin: 0 0 40px 0;
-    text-align: left
+    margin: 0;
+    text-align: left;
 }
 
 .skills-grid {
@@ -37,8 +35,7 @@
 
 .skill-card:hover,
 .skill-card:focus-visible {
-    transform: scale(1.02);
-    background-color: #ddd7ca;
+    transform: scale(1.1);
     outline: none;
 }
 
@@ -71,4 +68,16 @@
   .skill-card { transition: none; }
   .skill-card:hover,
   .skill-card:focus-visible { transform: none; }
+}
+
+@media (max-width: 768px) {
+  .skill-card {
+    gap: 12px;
+  }
+  
+  .skill-card {
+    flex: 0 1 140px;
+    padding: 16px;
+    gap: 12px;
+  }
 }

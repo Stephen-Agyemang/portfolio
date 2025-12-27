@@ -2,13 +2,14 @@ import { FaGithub, FaLinkedin, FaFileAlt } from "react-icons/fa";
 import "./Hero.css";
 
 const Hero = () => {
+    const isMobile = window.innerWidth < 768;
 
     return (
         <section id="home" className="hero"
             style={{ 
-                paddingTop: "212.8px", 
-                paddingLeft: "20px",
-                paddingRight: "20px",                
+                paddingTop: isMobile ? "140px" : "212.8px", 
+                paddingLeft: isMobile ? "16px" : "20px",
+                paddingRight: isMobile ? "16px" : "20px",                
                 textAlign: "left",
             }} 
         >   
@@ -16,11 +17,10 @@ const Hero = () => {
             <h1 
                 className="hey-there"
                 style={{
-                    fontSize: "2rem", 
+                    fontSize: isMobile ? "1.2rem" : "2rem", 
                     margin: 0,
                     lineHeight: 1.5,
                     fontFamily: "'Courier New', Courier, monospace",
-                    lineSpacing: "-5px",
                     color: "#7b7b7bff",
                     alignSelf: "flex-start",
                 }}
@@ -29,13 +29,13 @@ const Hero = () => {
             </h1>
             <h1 
                 style={{
-                    fontSize: "5rem", 
+                    fontSize: isMobile ? "2.5rem" : "5rem", 
                     margin: 0,
                     lineHeight: 1.1,
                     fontFamily: "'Courier New', Courier, monospace",
                     color: "#ffffffff",
                     alignSelf: "flex-start",
-                    marginLeft: "100px",
+                    marginLeft: isMobile ? "40px" : "100px",
                     }}
             >
                 I'm
@@ -43,7 +43,7 @@ const Hero = () => {
 
             <h1
                 style={{
-                    fontSize: "7rem",
+                    fontSize: isMobile ? "3rem" : "7rem",
                     margin: 0,
                     lineHeight: 1.1,
                     fontFamily: "'Courier New', Courier, monospace",
@@ -61,7 +61,7 @@ const Hero = () => {
                     display: "flex", 
                     justifyContent: "center", 
                     gap: "20px", 
-                    marginTop: "30px",
+                    marginTop: isMobile ? "24px" : "30px",
                     alignItems: "center",
                     flexWrap: "wrap",
                 }}
@@ -71,9 +71,10 @@ const Hero = () => {
                 <a 
                 href="https://www.linkedin.com/in/stephen-agyemang/" 
                 target="_blank"
+                rel="noopener noreferrer"
                 >
                     <FaLinkedin
-                        style={{ fontSize: "4rem", color: "#0899e7ff", transition: "transform 0.3s, color 0.3s" }}
+                        style={{ fontSize: isMobile ? "2.5rem" : "4rem", color: "#0899e7ff", transition: "transform 0.3s, color 0.3s" }}
                         onMouseOver={(e) => {
                         e.currentTarget.style.transform = "scale(1.2)";
                         e.currentTarget.style.color = "#0077b5";
@@ -89,9 +90,10 @@ const Hero = () => {
                 <a 
                 href="https://github.com/Stephen-Agyemang" 
                 target="_blank"
+                rel="noopener noreferrer"
                 >
                     <FaGithub
-                        style={{ fontSize: "4rem", color: "#505050ff", transition: "transform 0.3s, color 0.3s" }}
+                        style={{ fontSize: isMobile ? "2.5rem" : "4rem", color: "#505050ff", transition: "transform 0.3s, color 0.3s" }}
                         onMouseOver={(e) => {
                         e.currentTarget.style.transform = "scale(1.2)";
                         e.currentTarget.style.color = "#9da4a3";
@@ -107,9 +109,10 @@ const Hero = () => {
                 <a
                 href="https://drive.google.com/file/d/1YT1g8U-sZy3RfXnT_NT-_BTgPjLKcax3/view?usp=sharing"
                 target="_blank"
+                rel="noopener noreferrer"
                 >
                     <FaFileAlt
-                        style={{ fontSize: "4rem", color: "#505050ff", transition: "transform 0.3s, color 0.3s" }}
+                        style={{ fontSize: isMobile ? "2.5rem" : "4rem", color: "#505050ff", transition: "transform 0.3s, color 0.3s" }}
                         onMouseOver={(e) => {
                         e.currentTarget.style.transform = "scale(1.2)";
                         e.currentTarget.style.color = "#9da4a3";

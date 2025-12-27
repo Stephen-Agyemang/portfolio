@@ -2,6 +2,7 @@ import React from "react";
 import arrow from "../assets/arrow.jpg";
 
 const Projects = () => {
+    const isMobile = window.innerWidth < 768;
     const projects = [
         {
             name: "Emoji Chatbot", 
@@ -27,18 +28,24 @@ const Projects = () => {
         <section 
         id="projects" 
         style={{ 
-            padding: "80px 20px", 
+            padding: isMobile ? "60px 16px" : "80px 20px", 
             textAlign: "left", 
             minHeight: "100vh"
             }}
         >
-            <h2 style= {{ fontSize: "3rem", marginBottom: "40px", color:"#6c9a57ff"}} >
-                Projects</h2>
+            <h2 style={{ 
+                fontSize: isMobile ? "2rem" : "3rem", 
+                marginBottom: isMobile ? "24px" : "40px", 
+                color:"#6c9a57ff"
+                }} 
+            >
+                Projects
+            </h2>
             <div
                 style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                    gap: "40px",
+                    gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))",
+                    gap: isMobile ? "24px" : "40px",
                 }}
             >
                 {projects.map((project, index) => (
@@ -47,20 +54,32 @@ const Projects = () => {
                     style={{ 
                         border: "1px solid #444",
                         borderRadius: "10px",
-                        padding: "20px",
+                        padding: isMobile ? "16px" : "20px",
                         }}
                     >
-                        <h3 style={{ fontSize: "2rem", marginBottom: "10px", color: "#444" }}> 
+                        <h3 style={{ 
+                            fontSize: isMobile ? "1.5rem" : "2rem", 
+                            marginBottom: "10px", 
+                            color: "#444" 
+                            }}
+                        > 
                             {project.name}
                         </h3>
-                        <p style={{ fontSize: "1rem", marginBottom: "10px", color: "#444" }}>
-                            {project.description}</p>
+                        <p style={{ 
+                            fontSize: isMobile ? "0.95rem" : "1rem", 
+                            marginBottom: "10px", 
+                            color: "#444", 
+                            lineHeight: "1.5",
+                            }}
+                        >
+                            {project.description}
+                        </p>
                         <div style={{ display: "flex", gap: "15px", marginTop: "10px"}}>
                             <a href={project.link} target="_blank" rel="noopener noreferrer">
                                 <button
                                     style={{
                                         position: "relative",
-                                        padding: "10px 40px 10px 20px",
+                                        padding: isMobile ? "8px 36px 8px 16px" : "10px 40px 10px 20px",
                                         borderRadius: "5px",
                                         border: "none",
                                         backgroundColor: "#ffffffff",
@@ -70,6 +89,7 @@ const Projects = () => {
                                         display: "flex",
                                         alignItems: "center",
                                         gap: "5px",
+                                        fontSize: isMobile ? "0.9rem" : "1rem",
                                         transition: "background-color 0.3s, transform 0.2s",
                                         }}
                                         onMouseOver={(e) => {
@@ -81,16 +101,16 @@ const Projects = () => {
                                         e.currentTarget.style.transform = "scale(1)";
                                         }}
                                 >
-                                Source code 
+                                        Source code 
                                         <img
                                             src={arrow}
                                             alt="arrow"
                                             style={{
                                                 position: "absolute",
-                                                right: "12px",
+                                                right: isMobile ? "8px" : "12px",
                                                 top: "50%",
                                                 transform: "translateY(-50%)",
-                                                height: "20px",
+                                                height: isMobile ? "16px" : "20px",
                                                 pointerEvents: "none",
                                             }}
                                         />                
