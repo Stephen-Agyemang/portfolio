@@ -18,9 +18,9 @@ const Projects = () => {
         },
 
         {
-            name: "Zork V2 (in progress)",
-            description: "Classic text adventure game with new challenges and features.", 
-            link: "#",
+            name: "Zork v2 game",
+            description: "Classic text-based adventure game with new challenges and features.", 
+            link: "https://github.com/Stephen-Agyemang/Zork-v2",
         },
     ];
 
