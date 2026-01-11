@@ -33,14 +33,16 @@ const About = () => {
         <h2 style={{ 
           fontSize: isMobile ? "2rem" : "3rem", 
           marginBottom: "20px", 
-          color: "#7A9E8E" 
+          color: "#7A9E8E",
+          fontFamily: "'Courier New', Courier, monospace"
           }}>
             About Me
         </h2>
         <p style={{ 
           fontSize: isMobile ? "1rem" : "1.2rem", 
           lineHeight: "1.6", 
-          color: isMobile ? "#e5fff7" : "#444" 
+          color: isMobile ? "#e5fff7" : "#444",
+          fontFamily: "'Inter', system-ui, sans-serif"
           }}>
         I am a Ghanaian international Computer Science student at DePauw University with a strong passion 
         for software engineering and a keen interest in AI and machine learning. 
@@ -51,7 +53,8 @@ const About = () => {
         <p style={{ 
           fontSize: isMobile ? "1rem" : "1.2rem", 
           lineHeight: "1.6", 
-          color: isMobile ? "#e5fff7" : "#444" 
+          color: isMobile ? "#e5fff7" : "#444",
+          fontFamily: "'Inter', system-ui, sans-serif"
           }}>
         Outside of coding, I am also a Mathematics and Theatre/Acting enthusiast at DePauw. 
         I enjoy learning new things, including playing the guitar and piano, 

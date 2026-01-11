@@ -74,12 +74,13 @@ const Navbar = () => {
   };
 
   const handleHover = (e, enter) => {
+    const accent = "#6c9a57ff";
     if (section === "home") {
-        e.target.style.color = enter ? "#a6a8aeff" : "#ffffffff";
-        e.target.style.backgroundColor = enter ? "rgba(255,255,255,0.08)" : "transparent";
+      e.target.style.color = enter ? accent : "#ffffffff";
+      e.target.style.backgroundColor = enter ? "rgba(255,255,255,0.06)" : "transparent";
     }  else {
-        e.target.style.color = enter ? "#333" : "#444";
-        e.target.style.backgroundColor = enter ? "rgba(0,0,0,0.04)" : "transparent";
+      e.target.style.color = enter ? accent : "#444";
+      e.target.style.backgroundColor = enter ? "rgba(0,0,0,0.04)" : "transparent";
     }
 };
 

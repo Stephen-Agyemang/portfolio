@@ -35,7 +35,8 @@ const Projects = () => {
             <h2 style={{ 
                 fontSize: isMobile ? "2rem" : "3rem", 
                 marginBottom: isMobile ? "24px" : "40px", 
-                color:"#7A9E8E"
+                color:"#7A9E8E",
+                fontFamily: "'Courier New', Courier, monospace"
                 }} 
             >
                 Projects
@@ -59,7 +60,8 @@ const Projects = () => {
                         <h3 style={{ 
                             fontSize: isMobile ? "1.5rem" : "2rem", 
                             marginBottom: "10px", 
-                            color: isMobile ? "#e5fff7" : "#444" 
+                            color: isMobile ? "#e5fff7" : "#444",
+                            fontFamily: "'Inter', system-ui, sans-serif"
                             }}
                         > 
                             {project.name}
@@ -69,6 +71,7 @@ const Projects = () => {
                             marginBottom: "10px", 
                             color: isMobile ? "#e5fff7" : "#444", 
                             lineHeight: "1.5",
+                            fontFamily: "'Inter', system-ui, sans-serif"
                             }}
                         >
                             {project.description}

@@ -1,10 +1,10 @@
 .hero {
   position: relative;
-  padding: 200px 20px 140px;
+  padding: 200px 20px 179px;
   text-align: center;
   overflow: hidden;
   color: #e5fff7;
-  background: radial-gradient(circle at 20% 20%, rgba(0,255,180,0.12), transparent 30%),
+  background: radial-gradient(circle at 20% 20%, rgba(37, 246, 183, 0.08), transparent 30%),
               radial-gradient(circle at 80% 10%, rgba(8,153,231,0.18), transparent 35%),
               #060b18;
   border-radius: 0 0 50px 50px;
@@ -15,8 +15,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,255,180,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,180,0.06) 1px, transparent 1px);
+    linear-gradient(rgba(0,246,183,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,246,183,0.04) 1px, transparent 1px);
   background-size: 90px 90px;
   opacity: 0.5;
   pointer-events: none;
@@ -28,7 +28,7 @@
   position: absolute;
   inset: -20% -30%;
   background:
-    radial-gradient(500px at 30% 30%, rgba(0,255,180,0.18), transparent 60%),
+    radial-gradient(500px at 30% 30%, rgba(0,246,183,0.12), transparent 60%),
     radial-gradient(600px at 80% 20%, rgba(8,153,231,0.15), transparent 65%);
   filter: blur(50px);
   animation: heroGlow 28s ease-in-out infinite;

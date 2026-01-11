@@ -6,6 +6,30 @@
     color: #7A9E8E;
     margin: 0;
     text-align: left;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.skill-category {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-title {
+  color: #7A9E8E;
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .skills-grid {
@@ -55,7 +79,7 @@
 
 .skill-label {
   font-size: 0.9rem;
-  color: #444;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 .skill-link {
@@ -76,6 +100,14 @@
 }
 
 @media (max-width: 768px) {
+  .skills-container {
+    gap: 32px;
+  }
+
+  .category-title {
+    font-size: 1.1rem;
+  }
+
   .skills-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr);
@@ -86,7 +118,7 @@
     flex: none;
     padding: 10px 8px;
     gap: 6px;
-    background: rgba(0, 255, 180, 0.08);
+    background: rgba(0, 255, 180, 0.06);
     border: 1px solid #4a7c59;
   }
   
