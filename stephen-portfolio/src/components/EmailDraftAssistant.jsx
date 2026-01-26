@@ -19,7 +19,8 @@ const EmailDraftAssistant = () => {
         setSelectedDraft(null);
 
         try {
-            const results = await generateEmailDrafts(intent);
+            const data = await generateEmailDrafts(intent);
+            const results = data.options || [];
             // Replace placeholder with actual name if provided
             const finalResults = results.map(draft => ({
                 ...draft,

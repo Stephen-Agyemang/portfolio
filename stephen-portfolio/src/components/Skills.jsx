@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Skills.css";
+import antigravityIcon from "../assets/antigravity.png";
 
 const skillCategories = {
   languages: [
@@ -7,9 +8,10 @@ const skillCategories = {
     { name: "Python", cls: "devicon-python-plain colored", url: "https://www.youtube.com/watch?v=rfscVS0vtbw" },
     { name: "JavaScript", cls: "devicon-javascript-plain colored", url: "https://www.youtube.com/watch?v=PkZNo7MFNFg" },
     { name: "C++", cls: "devicon-cplusplus-plain colored", url: "https://www.youtube.com/watch?v=1v_4dL8l8pQ" },
-    { name: "HTML", cls: "devicon-html5-plain colored", url: "https://www.youtube.com/watch?v=pQN-pnXPaVg" },
-    { name: "CSS", cls: "devicon-css3-plain colored", url: "https://www.youtube.com/watch?v=ieTHC78giGQ" },
+    //{ name: "HTML", cls: "devicon-html5-plain colored", url: "https://www.youtube.com/watch?v=pQN-pnXPaVg" },
+    // { name: "CSS", cls: "devicon-css3-plain colored", url: "https://www.youtube.com/watch?v=ieTHC78giGQ" },
   ],
+
   frameworksTools: [
     { name: "React", cls: "devicon-react-original colored", url: "https://www.youtube.com/watch?v=SqcY0GlETPk" },
     { name: "Node.js", cls: "devicon-nodejs-plain colored", url: "https://www.youtube.com/watch?v=Oe421EPjeBE" },
@@ -21,6 +23,7 @@ const skillCategories = {
     { name: "VS Code", cls: "devicon-vscode-plain colored", url: "https://www.youtube.com/watch?v=B-s71n0dHUk" },
     { name: "PyCharm", cls: "devicon-pycharm-plain colored", url: "https://www.youtube.com/watch?v=HHcZbXsZtm0" },
     { name: "IntelliJ IDEA", cls: "devicon-intellij-plain colored", url: "https://www.youtube.com/watch?v=GSKERVTMWqs" },
+    { name: "Antigravity", icon: antigravityIcon, url: "https://www.youtube.com/watch?v=nTOVIGsqCuY" },
   ]
 };
 
@@ -37,7 +40,7 @@ const Skills = () => {
     <div className="skill-category">
       <h3 className="category-title">{title}</h3>
       <ul className="skills-grid" role="list" style={{ gap: isMobile ? "8px" : "18px" }}>
-        {skills.map(({ name, cls, url }) => (
+        {skills.map(({ name, cls, icon, url }) => (
           <li key={name} className="skill-card">
             <a
               href={url}
@@ -46,7 +49,11 @@ const Skills = () => {
               className="skill-link"
               aria-label={`Learn more about ${name}`}
             >
-              <i className={cls} style={{ fontSize: isMobile ? 28 : 44 }} aria-hidden="true"></i>
+              {icon ? (
+                <img src={icon} alt={name} style={{ width: isMobile ? 28 : 44, height: isMobile ? 28 : 44, objectFit: 'contain' }} />
+              ) : (
+                <i className={cls} style={{ fontSize: isMobile ? 28 : 44 }} aria-hidden="true"></i>
+              )}
               <span className="skill-label" style={{ fontSize: isMobile ? "0.75rem" : "1rem" }}>
                 {name}
               </span>

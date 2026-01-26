@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { findMatchingProjects } from '../services/aiService';
+import { chatWithAIStream } from '../services/aiService';
 import { FaRobot, FaTimes, FaPaperPlane, FaArrowRight } from 'react-icons/fa';
 import { projects } from '../data/projects';
 
@@ -37,21 +37,45 @@ const ProjectDiscovery = () => {
 
         const userMsg = query;
         setQuery('');
+
         setMessages(prev => [...prev, { type: 'user', content: userMsg }]);
         setLoading(true);
 
-        try {
-            const response = await findMatchingProjects(userMsg, projects);
-            const { reply, matches } = response;
-            const matchedProjects = projects.filter(p => matches.includes(p.name));
+        setMessages(prev => [...prev, { type: 'bot', content: '' }]);
 
+        let accumulatedContent = '';
+        try {
+            await chatWithAIStream(userMsg, projects, (chunk) => {
+                accumulatedContent += chunk;
+
+                // Split conversational reply from project matches
+                const [replyPart, projectsPart] = accumulatedContent.split('---PROJECTS---');
+
+                let matchedProjects = [];
+                if (projectsPart) {
+                    const projectNames = projectsPart.split(',').map(n => n.trim()).filter(Boolean);
+                    matchedProjects = projects.filter(p =>
+                        projectNames.some(name => p.name.toLowerCase().includes(name.toLowerCase()))
+                    );
+                }
+
+                setMessages(prev => {
+                    const updated = [...prev];
+                    const lastIndex = updated.length - 1;
+                    updated[lastIndex] = {
+                        ...updated[lastIndex],
+                        content: replyPart.trim(),
+                        projects: matchedProjects.length > 0 ? matchedProjects : undefined
+                    };
+                    return updated;
+                });
+            });
+        } catch (err) {
+            console.error("AI Chat Error:", err);
             setMessages(prev => [...prev, {
                 type: 'bot',
-                content: reply,
-                projects: matchedProjects.length > 0 ? matchedProjects : null
+                content: "Sorry, I had trouble connecting to my brain."
             }]);
-        } catch (error) {
-            setMessages(prev => [...prev, { type: 'bot', content: "Sorry, I had trouble connecting to my brain. Please try again." }]);
         } finally {
             setLoading(false);
         }
@@ -230,20 +254,26 @@ const ProjectDiscovery = () => {
                             background: "#c9ec9e",
                             color: "#000",
                             border: "none",
-                            borderRadius: "50%",
-                            width: "40px",
-                            height: "40px",
+                            borderRadius: "12px",
+                            width: "54px",
+                            height: "48px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
-                            fontSize: "1.1rem",
-                            transition: "background 0.2s"
+                            transition: "all 0.2s ease",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
                         }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#b8db8d"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "#c9ec9e"}
+                            onMouseOver={(e) => {
+                                e.currentTarget.style.background = "#b8db8d";
+                                e.currentTarget.style.transform = "translateX(3px)";
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.background = "#c9ec9e";
+                                e.currentTarget.style.transform = "translateX(0)";
+                            }}
                         >
-                            <FaPaperPlane />
+                            <FaArrowRight size={26} />
                         </button>
                     </form>
                 </div>

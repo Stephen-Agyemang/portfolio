@@ -107,7 +107,7 @@ const Hero = () => {
 
                 {/* Resume */}
                 <a
-                    href="https://drive.google.com/file/d/1YT1g8U-sZy3RfXnT_NT-_BTgPjLKcax3/view?usp=sharing"
+                    href="https://drive.google.com/file/d/1UooMqd5hwmwFVudWyTW-rt7ZIYRx04Xa/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
                 >

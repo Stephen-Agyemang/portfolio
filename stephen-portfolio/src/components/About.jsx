@@ -1,5 +1,5 @@
 import React from "react";
-import Stephen from "../assets/Stephen.jpg"
+import Stephen from "../assets/Stephen.webp"
 
 const About = () => {
   const isMobile = window.innerWidth < 768;
@@ -20,10 +20,11 @@ const About = () => {
       <img
         src={Stephen}
         alt="Stephen Agyemang"
+        loading="lazy"
         style={{
-          width: isMobile ? "280px" : "400px",
+          width: isMobile ? "300px" : "400px",
           height: isMobile ? "280px" : "350px",
-          borderRadius: "50%",
+          borderRadius: "100%",
           objectFit: "cover",
         }}
       />
