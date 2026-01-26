@@ -240,7 +240,7 @@ const ProjectDiscovery = () => {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Ask about projects..."
+                            placeholder="Ask about projects, skills, or background..."
                             style={{
                                 flex: 1,
                                 padding: "10px 15px",

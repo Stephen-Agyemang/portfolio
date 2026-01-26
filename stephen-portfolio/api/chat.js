@@ -32,9 +32,28 @@ export default async function handler(req, res) {
             }
         });
 
+        const stephenProfile = {
+            name: "Stephen Agyemang",
+            education: "Computer Science at DePauw University (3.95 GPA, Honor Scholar)",
+            background: "Ghanaian international student",
+            interests: ["Artificial Intelligence", "Machine Learning", "Mathematics", "Theatre & Acting", "Soccer"],
+            bio: "Focuses on building scalable software and exploring the intersections of AI and ML. Multi-disciplinary enthusiast blending logic with creative expression.",
+            links: {
+                linkedIn: "https://www.linkedin.com/in/stephen-agyemang/",
+                github: "https://github.com/Stephen-Agyemang"
+            }
+        };
+
         const projectContext = allProjects.map(p =>
             `Name: ${p.name}, Description: ${p.description}, Skills: ${p.skills.join(", ")}`
         ).join("\n---\n");
+
+        const profileContext = `
+            About Stephen: ${stephenProfile.bio} Education: ${stephenProfile.education}. 
+            Origins: ${stephenProfile.background}. 
+            Interests: ${stephenProfile.interests.join(", ")}.
+            Links: LinkedIn (${stephenProfile.links.linkedIn}), GitHub (${stephenProfile.links.github})
+        `;
 
         // Set response headers for streaming 
         res.setHeader("Content-Type", "text/event-stream");
@@ -47,15 +66,15 @@ export default async function handler(req, res) {
             messages: [
                 {
                     role: "system", content: `You are Stephen Agyemang's personal portfolio AI assistant.
-          Your goal is to chat with visitors, answer questions about Stephen, and recommend his projects when relevant.
+          Your goal is to chat with visitors, answer questions about Stephen's background, education, and interests, but prioritize his projects when technical skills are mentioned.
           
-          Stephen is a software developer. You have access to his projects list below.
+          Stephen is a software engineer. You have access to his profile and projects list below.
           
           Rules:
           1. **Be Conversational**: If the user says "Hi" or "How are you?", reply normally and politely.
-          2. **Answer Questions**: If they ask "Who is Stephen?", summarize him based on the successful projects he has built (Python, Java, React).
+          2. **Personal Inquiries**: If they ask about Stephen's education, background, or interests, use the "About Stephen" section to provide helpful, enthusiastic answers.
           3. **Project Matching**: If the user asks about specific skills or projects (e.g. "Does he know Java?"), answer them AND provide a list of matching projects using the "---PROJECTS---" delimiter format.
-          4. **No Match?**: If they ask for something he hasn't done (e.g. "C++"), be honest but friendly. "He hasn't uploaded any C++ projects yet, but he is quick to learn!"
+          4. **Connect**: If they want to talk to him or see his profile, mention his LinkedIn or GitHub links provided in the context.
           5. **Tone**: Professional, friendly, and enthusiastic.
           
           Response Format:
@@ -63,13 +82,11 @@ export default async function handler(req, res) {
           Then, if there are matching projects, add exactly "---PROJECTS---" on a new line followed by a comma-separated list of the exact project names.
           
           Example:
-          "I'd love to help! Stephen has several React projects.
+          "I'd love to help! Stephen has several React projects. He also enjoys playing soccer when he's not coding!
           ---PROJECTS---
-          Project A, Project B"
-          
-          If no projects match, just provide the conversational response.`
+          Project A, Project B"`
                 },
-                { role: "user", content: `User Message: "${userMessage}"\n\nProjects:\n${projectContext}` }
+                { role: "user", content: `Context:\n${profileContext}\n\nProjects:\n${projectContext}\n\nUser Message: "${userMessage}"` }
             ],
             stream: true,
         });
