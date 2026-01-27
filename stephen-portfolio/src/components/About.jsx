@@ -20,7 +20,7 @@ const About = () => {
       <img
         src={Stephen}
         alt="Stephen Agyemang"
-        fetchpriority="high"
+        fetchPriority="high"
         style={{
           width: isMobile ? "300px" : "400px",
           height: isMobile ? "280px" : "350px",

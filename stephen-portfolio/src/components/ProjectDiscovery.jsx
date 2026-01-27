@@ -8,6 +8,21 @@ const ProjectDiscovery = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [query, setQuery] = useState('');
+    const [messages, setMessages] = useState(() => {
+        try {
+            const saved = localStorage.getItem('chat-messages');
+            return saved ? JSON.parse(saved) : [
+                { type: 'bot', content: "Hi! I'm Stephen's AI Assistant. Ask me about his projects or skills!" }
+            ];
+        } catch (e) {
+            console.error("Error loading messages from localStorage:", e);
+            return [{ type: 'bot', content: "Hi! I'm Stephen's AI Assistant. Ask me about his projects or skills!" }];
+        }
+    });
+    const [loading, setLoading] = useState(false);
+    const messagesEndRef = useRef(null);
+    const lastRequestTimeRef = useRef(0);
+    const RATE_LIMIT_MS = 2000;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -17,11 +32,9 @@ const ProjectDiscovery = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const [messages, setMessages] = useState([
-        { type: 'bot', content: "Hi! I'm Stephen's AI Assistant. Ask me about his projects or skills!" }
-    ]);
-    const [loading, setLoading] = useState(false);
-    const messagesEndRef = useRef(null);
+    useEffect(() => {
+        localStorage.setItem('chat-messages', JSON.stringify(messages));
+    }, [messages]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,6 +46,20 @@ const ProjectDiscovery = () => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
+
+        const now = Date.now();
+
+        if (now - lastRequestTimeRef.current < RATE_LIMIT_MS) {
+            setMessages(prev => [
+                ...prev,
+                {
+                    type: 'bot',
+                    content: "Please wait a moment before sending another message."
+                }
+            ])
+            return;
+        }
+        lastRequestTimeRef.current = now;
         if (!query.trim()) return;
 
         const userMsg = query;
