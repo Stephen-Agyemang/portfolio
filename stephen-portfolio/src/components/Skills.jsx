@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Skills.css";
-import antigravityIcon from "../assets/antigravity.png";
+import antigravityIcon from "../assets/antigravity_small.png";
 
 const skillCategories = {
   languages: [

@@ -1,5 +1,5 @@
 import React from "react";
-import Stephen from "../assets/Stephen.webp"
+import Stephen from "../assets/Stephen.jpg"
 
 const About = () => {
   const isMobile = window.innerWidth < 768;
@@ -20,7 +20,7 @@ const About = () => {
       <img
         src={Stephen}
         alt="Stephen Agyemang"
-        loading="lazy"
+        fetchpriority="high"
         style={{
           width: isMobile ? "300px" : "400px",
           height: isMobile ? "280px" : "350px",
@@ -45,8 +45,8 @@ const About = () => {
           color: isMobile ? "#e5fff7" : "#444",
           fontFamily: "'Inter', system-ui, sans-serif"
         }}>
-          I am a Ghanaian international student at DePauw University, pursuing a degree 
-          in Computer Science with a 3.95 GPA. As an Honor Scholar, I focus on building 
+          I am a Ghanaian international student at DePauw University, pursuing a degree
+          in Computer Science with a 3.95 GPA. As an Honor Scholar, I focus on building
           scalable software and exploring the intersections of AI and Machine Learning.
         </p>
 
@@ -56,11 +56,11 @@ const About = () => {
           color: isMobile ? "#e5fff7" : "#444",
           fontFamily: "'Inter', system-ui, sans-serif"
         }}>
-          My technical toolkit includes Java (Spring Boot), Python, and Git, with a deep 
-          interest in optimizing data structures and algorithms. Beyond the terminal, 
-          I am a multi-disciplinary enthusiast—blending the logic of Mathematics with 
-          the creative expression of Theatre and Acting. Whether I am collaborating on 
-          a soccer pitch or architecting a full-stack application like Zork v2, I thrive in environments 
+          My technical toolkit includes Java (Spring Boot), Python, and Git, with a deep
+          interest in optimizing data structures and algorithms. Beyond the terminal,
+          I am a multi-disciplinary enthusiast—blending the logic of Mathematics with
+          the creative expression of Theatre and Acting. Whether I am collaborating on
+          a soccer pitch or architecting a full-stack application like Zork v2, I thrive in environments
           that challenge my problem-solving and teamwork skills.
         </p>
       </div>
