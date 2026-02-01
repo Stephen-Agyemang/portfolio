@@ -136,7 +136,8 @@ const ProjectDiscovery = () => {
                     fontWeight: "bold",
                     transition: "all 0.3s ease",
                     transform: isHovered ? "scale(1.05)" : "scale(1)",
-                    zIndex: 1000
+                    zIndex: 1000,
+                    outline: 'none'
                 }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -277,27 +278,35 @@ const ProjectDiscovery = () => {
                                 fontSize: "0.95rem"
                             }}
                         />
-                        <button type="submit" style={{
-                            background: "#c9ec9e",
-                            color: "#000",
-                            border: "none",
-                            borderRadius: "12px",
-                            width: "54px",
-                            height: "48px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "pointer",
-                            transition: "all 0.2s ease",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-                        }}
-                            onMouseOver={(e) => {
-                                e.currentTarget.style.background = "#b8db8d";
-                                e.currentTarget.style.transform = "translateX(3px)";
+                        <button
+                            type="submit"
+                            disabled={!query.trim()}
+                            style={{
+                                background: !query.trim() ? "#e0e0e0" : "#c9ec9e",
+                                color: !query.trim() ? "#aaa" : "#000",
+                                border: "none",
+                                borderRadius: "12px",
+                                width: "54px",
+                                height: "48px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: !query.trim() ? "not-allowed" : "pointer",
+                                transition: "all 0.2s ease",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                outline: 'none'
                             }}
-                            onMouseOut={(e) => {
-                                e.currentTarget.style.background = "#c9ec9e";
-                                e.currentTarget.style.transform = "translateX(0)";
+                            onMouseOver={e => {
+                                if (query.trim()) {
+                                    e.currentTarget.style.background = "#b8db8d";
+                                    e.currentTarget.style.transform = "translateX(3px)";
+                                }
+                            }}
+                            onMouseOut={e => {
+                                if (query.trim()) {
+                                    e.currentTarget.style.background = "#c9ec9e";
+                                    e.currentTarget.style.transform = "translateX(0)";
+                                }
                             }}
                         >
                             <FaArrowRight size={26} />
