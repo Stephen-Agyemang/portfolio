@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { fetchGithubProjects } from "./githubFetcher.js";
 import { getLinkedInProfile } from "./linkedinProfile.js";
 import { getHandshakeProfile } from "./handshakeProfile.js";
+import { logChatMessage } from "./chatLogger.js";
 
 const openAiKey = globalThis.process?.env?.OPENAI_API_KEY;
 
@@ -244,12 +245,6 @@ export default async function handler(req, res) {
 
         const projectContext = buildProjectContext(allProjects);
 
-        // Set response headers for streaming 
-        res.setHeader("Content-Type", "text/event-stream");
-        res.setHeader("Cache-Control", "no-cache");
-        res.setHeader("Connection", "keep-alive");
-        if (res.flushHeaders) res.flushHeaders();
-
         const stream = await client.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
@@ -286,10 +281,16 @@ CORE RULES:
 9. Highlights you can share naturally when asked:
    - FridgeJam was featured at the very first GDG Coding Jam by GDG leadership — you were the first project ever demoed.
    - You're an Honor Scholar — DePauw's most selective academic track.
-   - 4.0 GPA, incoming ML/DL researcher, ITAP intern.
+   - 4.0 GPA, incoming DL/ML researcher.
    - You play soccer, do theatre, photography, piano, and guitar — not just a coder.
    - Ghanaian, international student, first-gen adjacent — you've worked hard to be here.
    - You have two real technical focuses: (1) AI/ML/DL research and (2) Backend SWE. Backend means distributed systems, cloud infrastructure, REST APIs, Spring Boot, FastAPI, Docker, Kubernetes — you're actively exploring all of this. Don't lump it all under "full-stack" — backend is its own thing for you and you care about it seriously.
+
+10. ITAP vs IT Intern — these are two different things, don't mix them up:
+   - "ITAP Intern" is a role you're INCOMING to (announced, not yet started, no day-to-day details exist yet). If asked what you do there, say it hasn't started yet — don't invent duties for it.
+   - "IT Intern" at DePauw is your CURRENT, already-started job (since March 2026) — that's the one with real duties: tech support, diagnosing hardware/software issues, the ticketing system, password resets, MFA setup, etc. Pull those specifics only when talking about the IT Intern role, never the ITAP one.
+
+11. Never invent specifics that aren't in the context below (dates, job duties, project details, etc.). If someone asks something the context doesn't cover, say you're not sure or that you don't have that detail — don't guess or make something up just to sound complete. If you're caught contradicting yourself, just say so plainly and correct it instead of doubling down.
 
 Response format:
 Write your conversational reply first.
@@ -303,12 +304,30 @@ Project A, Project B`
             stream: true,
         });
 
-        for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            if (content) {
-                res.write(content);
+        // Headers are only committed once the OpenAI stream is confirmed, so
+        // failures above this point can still return a normal JSON error.
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        if (res.flushHeaders) res.flushHeaders();
+
+        let replyText = "";
+        try {
+            for await (const chunk of stream) {
+                const content = chunk.choices[0]?.delta?.content || "";
+                if (content) {
+                    replyText += content;
+                    res.write(content);
+                }
             }
+        } catch (streamError) {
+            // Headers are already sent as text/event-stream at this point, so
+            // we can't switch to a JSON error response — write a plain-text
+            // fallback into the stream instead of going silent.
+            console.error("AI Stream Error:", streamError);
+            res.write("\n\n[AI is taking a break, try again.]");
         }
+        await logChatMessage(userMessage, replyText);
         res.end();
     } catch (error) {
         // Log full error details for debugging
