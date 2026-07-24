@@ -143,6 +143,18 @@ function trimText(text, maxLength) {
     return `${text.slice(0, maxLength - 1)}...`;
 }
 
+const PROJECT_KEYWORDS = [
+    "project", "build", "built", "work", "skill", "experience", "code",
+    "github", "intern", "fridgejam", "monica", "zork", "api", "stack",
+    "language", "tech", "react", "python", "java", "backend", "frontend",
+    "ml", "ai", "demo", "portfolio", "repo", "resume"
+];
+
+function needsProjectContext(message) {
+    const lower = message.toLowerCase();
+    return PROJECT_KEYWORDS.some(kw => lower.includes(kw));
+}
+
 function dedupeProjects(projects = []) {
     const seen = new Set();
     const deduped = [];
@@ -199,8 +211,13 @@ export default async function handler(req, res) {
     try {
         // Reuse expensive static/enriched context between requests to reduce latency.
         let contextBase = cachedPromptContext.value;
-        if (!contextBase || cachedPromptContext.expiresAt < Date.now()) {
-            const githubProjects = await fetchGithubProjects();
+        const cacheExpired = !contextBase || cachedPromptContext.expiresAt < Date.now();
+        if (cacheExpired) {
+            // Skip the GitHub network call for casual messages (greetings, chitchat)
+            // that clearly won't need project info — saves ~500ms-1s on cold starts.
+            const githubProjects = needsProjectContext(userMessage)
+                ? await fetchGithubProjects()
+                : (contextBase?.githubProjects ?? []);
             const linkedInProfile = getLinkedInProfile();
             const handshakeProfile = getHandshakeProfile();
 
@@ -262,7 +279,11 @@ You have all your LinkedIn data, project details, and Handshake profile availabl
 
 CORE RULES:
 
-1. Match the visitor's energy. Casual message → casual reply. Thoughtful question → thoughtful but still brief answer. One-word response like "cool" or "okay" → one natural sentence back, nothing more.
+1. Match the visitor's energy exactly.
+   - Pure greeting ("hi", "hey", "hello", "sup", "what's up", etc.) → reply with just a greeting back. Literally "hey!" or "hey, what's up?" — that's it. Do NOT volunteer a bio, a list of topics, or anything about Stephen. Wait for them to actually ask something.
+   - One-word or one-sentence message → one sentence back, nothing more.
+   - Casual question → casual, brief answer.
+   - Thoughtful question → thoughtful but still concise answer.
 
 2. Answer the question first, every time. Don't warm up with filler. Just answer.
 
@@ -270,7 +291,7 @@ CORE RULES:
 
 4. Sound human. No "Certainly!", "Great question!", "I'd be happy to", or "Feel free to ask". No bullet lists unless the visitor specifically asked for a breakdown.
 
-5. Projects only when relevant. Only surface the ---PROJECTS--- block if the visitor directly asks about your projects, work, or a specific skill. Don't volunteer it otherwise.
+5. Never volunteer information that wasn't asked for. The visitor will ask if they want to know. Projects, skills, experience — only bring these up when directly asked.
 
 6. No raw links unless asked. The page already has buttons and cards — point people there instead.
 
