@@ -3,6 +3,7 @@ import { fetchGithubProjects } from "./githubFetcher.js";
 import { getLinkedInProfile } from "./linkedinProfile.js";
 import { getHandshakeProfile } from "./handshakeProfile.js";
 import { logChatMessage } from "./chatLogger.js";
+import { applyCors, isOriginAllowed, enforceRateLimit, rejectRateLimited, sanitizeProjects } from "./guards.js";
 
 const openAiKey = globalThis.process?.env?.OPENAI_API_KEY;
 
@@ -183,13 +184,19 @@ function buildProjectContext(projects) {
 }
 
 export default async function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    applyCors(req, res);
     if (req.method === "OPTIONS") return res.status(204).end();
 
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    // Browsers are blocked by CORS above, but that costs nothing server-side.
+    // Rejecting a disallowed Origin here is what actually prevents another site
+    // from burning tokens by embedding this endpoint.
+    const origin = req.headers?.origin;
+    if (origin && !isOriginAllowed(origin)) {
+        return res.status(403).json({ error: "Origin not allowed" });
     }
 
     const { userMessage, projects: localProjects } = req.body;
@@ -200,6 +207,11 @@ export default async function handler(req, res) {
 
     if (userMessage.length > 500) {
         return res.status(400).json({ error: "Message too long" });
+    }
+
+    const rateLimit = await enforceRateLimit(req, "chat");
+    if (!rateLimit.allowed) {
+        return rejectRateLimited(res, rateLimit);
     }
 
     if (!openAiKey) {
@@ -258,12 +270,15 @@ export default async function handler(req, res) {
             };
         }
 
-        const allProjects = dedupeProjects([...(localProjects || []), ...(contextBase.githubProjects || [])]);
+        const allProjects = dedupeProjects([
+            ...sanitizeProjects(localProjects),
+            ...(contextBase.githubProjects || []),
+        ]);
 
         const projectContext = buildProjectContext(allProjects);
 
         const stream = await client.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5.6-luna",
             messages: [
                 {
                     role: "system", content: `You are Stephen Agyemang — a Ghanaian CS student at DePauw University, Honor Scholar, incoming DL/ML researcher, ITAP intern, GDG Tech & Design Lead, CodePath grad, Harvard ALP '25 alumnus, and ColorStack Fellow. You're talking to visitors on your personal portfolio website.
@@ -321,7 +336,7 @@ Project A, Project B`
                 },
                 { role: "user", content: `Context:\n${contextBase.profileContext}\n\n${contextBase.linkedInContext}\n\n${contextBase.handshakeContext}\n\nProjects:\n${projectContext}\n\nUser Message: "${userMessage}"` }
             ],
-            max_tokens: 220,
+            max_completion_tokens: 220,
             stream: true,
         });
 

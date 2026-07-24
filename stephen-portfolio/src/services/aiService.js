@@ -1,3 +1,14 @@
+const FALLBACK_ERROR = "Something went wrong. Give it a moment and try again.";
+
+/** Pulls the server's human-readable message out of a failed response. */
+async function readErrorMessage(res) {
+    try {
+        const data = await res.json();
+        return data?.error || FALLBACK_ERROR;
+    } catch {
+        return FALLBACK_ERROR;
+    }
+}
 
 export async function chatWithAIStream(userMessage, projects, onChunk) {
     const res = await fetch("https://stephen-vite.vercel.app/api/chat", {
@@ -7,6 +18,10 @@ export async function chatWithAIStream(userMessage, projects, onChunk) {
         },
         body: JSON.stringify({ userMessage, projects })
     });
+
+    // Rate-limit and validation failures return JSON, not a stream. Without this
+    // the error body would be piped straight into the chat bubble as raw text.
+    if (!res.ok) throw new Error(await readErrorMessage(res));
 
     if (!res.body) throw new Error ("No response body");
 
@@ -51,6 +66,8 @@ export async function generateEmailDrafts(userIntent) {
         },
         body: JSON.stringify({ userIntent }),
     });
-    
+
+    if (!res.ok) throw new Error(await readErrorMessage(res));
+
     return res.json();
-} 
+}

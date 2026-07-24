@@ -1,18 +1,24 @@
 /* eslint-disable no-undef */
 import OpenAI from "openai";
+import { applyCors, isOriginAllowed, enforceRateLimit, rejectRateLimited } from "./guards.js";
 
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+const MAX_INTENT_CHARS = 600;
+
 export default async function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    applyCors(req, res);
     if (req.method === "OPTIONS") return res.status(204).end();
 
     if (req.method !== "POST") {
         return res.status(405).end();
+    }
+
+    const origin = req.headers?.origin;
+    if (origin && !isOriginAllowed(origin)) {
+        return res.status(403).json({ error: "Origin not allowed" });
     }
 
     try {
@@ -22,8 +28,17 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: "Invalid intent input" });
         }
 
+        if (userIntent.length > MAX_INTENT_CHARS) {
+            return res.status(400).json({ error: "Intent too long" });
+        }
+
+        const rateLimit = await enforceRateLimit(req, "email");
+        if (!rateLimit.allowed) {
+            return rejectRateLimited(res, rateLimit);
+        }
+
         const completion = await client.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5.6-luna",
             messages: [
                 {
                     role: "system",

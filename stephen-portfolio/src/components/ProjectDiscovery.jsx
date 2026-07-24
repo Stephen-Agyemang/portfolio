@@ -94,7 +94,9 @@ const ProjectDiscovery = () => {
             console.error("AI Chat Error:", err);
             setMessages(prev => [...prev, {
                 type: 'bot',
-                content: "Sorry, I had trouble connecting to my brain."
+                // Rate-limit replies explain what to do next, so show them as-is
+                // rather than burying them under the generic failure message.
+                content: err?.message || "Sorry, I had trouble connecting to my brain."
             }]);
         } finally {
             setLoading(false);

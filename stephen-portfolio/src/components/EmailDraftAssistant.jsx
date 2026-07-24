@@ -32,8 +32,8 @@ const EmailDraftAssistant = () => {
                 body: senderName ? draft.body.replace("[Your Name]", senderName) : draft.body
             }));
             setDrafts(finalResults);
-        } catch {
-            setError('Failed to generate drafts. Please check your API key or try again.');
+        } catch (err) {
+            setError(err?.message || 'Failed to generate drafts. Please try again.');
         } finally {
             setLoading(false);
         }
