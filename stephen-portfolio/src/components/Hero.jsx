@@ -97,7 +97,7 @@ const Hero = () => {
                             color: "var(--text-title)",
                             letterSpacing: "0.5px"
                         }}>
-                            SYS_STATUS // ACTIVELY_BUILDING
+                            SYS_STATUS // ACTIVELY_LEARNING_&_BUILDING
                         </span>
                     </div>
 
@@ -111,7 +111,7 @@ const Hero = () => {
                             color: "var(--hero-text-grey)",
                             letterSpacing: "0.5px"
                         }}>
-                            LOC // GREENCASTLE_IN
+                            EDU // COMPUTER SCIENCE & MATH @ DEPAUW_UNIVERSITY
                         </span>
                     </div>
 
@@ -125,7 +125,7 @@ const Hero = () => {
                             color: "var(--hero-text-grey)",
                             letterSpacing: "0.5px"
                         }}>
-                            CURRENT_FOCUS // AI_ML_DL / CLOUD
+                            CURRENT_FOCUS // AI_ML_DL / BACKEND_ENGINEERING
                         </span>
                     </div>
                 </div>
