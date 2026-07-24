@@ -84,15 +84,32 @@ const Projects = () => {
                                 </span>
                             </div>
 
-                            <h3 style={{
-                                fontSize: isMobile ? "1.4rem" : "1.6rem",
-                                marginBottom: "4px",
-                                color: "var(--text-title)",
-                                fontWeight: "800",
-                                fontFamily: "'Inter', sans-serif"
-                            }}>
-                                {project.name}
-                            </h3>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px", flexWrap: "wrap" }}>
+                                <h3 style={{
+                                    fontSize: isMobile ? "1.4rem" : "1.6rem",
+                                    margin: 0,
+                                    color: "var(--text-title)",
+                                    fontWeight: "800",
+                                    fontFamily: "'Inter', sans-serif"
+                                }}>
+                                    {project.name}
+                                </h3>
+                                {project.private && (
+                                    <span style={{
+                                        fontFamily: "'Courier New', Courier, monospace",
+                                        fontSize: "0.58rem",
+                                        fontWeight: "700",
+                                        letterSpacing: "1px",
+                                        padding: "3px 8px",
+                                        borderRadius: "4px",
+                                        border: `1px solid color-mix(in srgb, ${themeColor} 40%, transparent)`,
+                                        background: `color-mix(in srgb, ${themeColor} 10%, transparent)`,
+                                        color: themeColor,
+                                    }}>
+                                        // PRIVATE
+                                    </span>
+                                )}
+                            </div>
                             
                             <p style={{
                                 fontSize: "0.85rem",
