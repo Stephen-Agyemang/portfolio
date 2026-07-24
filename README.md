@@ -95,7 +95,17 @@ Both hosts deploy automatically from `main`:
 | Firebase Hosting | [GitHub Actions](.github/workflows/firebase-hosting.yml) | Static site at the live URL |
 | Vercel | Git integration | `/api/*` serverless functions |
 
-The Firebase workflow builds `stephen-portfolio/` and deploys to the `live` channel using a `FIREBASE_SERVICE_ACCOUNT` repo secret scoped to Hosting.
+The Firebase workflow builds `stephen-portfolio/` and deploys to the `live` channel using a `FIREBASE_DEPLOY_SERVICE_ACCOUNT` repo secret.
+
+Note that this is a **different credential** from the `FIREBASE_SERVICE_ACCOUNT` env var above, and deliberately so:
+
+| | `FIREBASE_DEPLOY_SERVICE_ACCOUNT` | `FIREBASE_SERVICE_ACCOUNT` |
+|---|---|---|
+| Stored in | GitHub Actions repo secret | Vercel env vars / `.env.local` |
+| Account | `github-actions-deploy@…` | `firebase-adminsdk-fbsvc@…` |
+| Scope | Hosting deploy only | Firestore read/write |
+
+The deploy account holds `firebasehosting.admin` and `firebase.viewer` and nothing else, so a leaked CI secret can't reach Firestore.
 
 To deploy Firebase manually:
 
