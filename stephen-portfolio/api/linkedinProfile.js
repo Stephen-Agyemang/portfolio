@@ -8,10 +8,10 @@
 export function getLinkedInProfile() {
     return {
         profileUrl: "https://www.linkedin.com/in/stephagyemang",
-        headline: "Incoming DL/ML Researcher & ITAP Intern @ DePauw University | Honor Scholar | CodePath Graduate | Aspiring Software Engineer | Harvard ALP '25 Alumni | ColorStack Fellow",
+        headline: "DL/ML Researcher & Incoming ITAP Intern @ DePauw University | Honor Scholar | CodePath Graduate | Aspiring Software Engineer | Harvard ALP '25 Alumni | ColorStack Fellow",
         location: "Greater Indianapolis",
         stats: "1K+ followers · 500+ connections",
-        summary: `Computer Science student at DePauw University with two serious technical focuses: backend software engineering and AI/ML/DL research. On the backend side, I'm actively exploring distributed systems, cloud infrastructure, REST APIs, Spring Boot, FastAPI, Docker, and Kubernetes. On the research side, I'm an incoming DL/ML researcher diving deep into machine learning and deep learning. Tech and Design Lead for the Google Developer Group on campus, Aspire Leaders Program alumnus (Harvard, Cohort 4 '25), and ColorStack Fellow. Beyond code, I'm a multi-disciplinary thinker — theatre, photography, soccer, piano, and guitar all have a place in my life too.`,
+        summary: `Computer Science student at DePauw University with two serious technical focuses: backend software engineering and AI/ML/DL research. On the backend side, I'm actively exploring distributed systems, cloud infrastructure, REST APIs, Spring Boot, FastAPI, Docker, and Kubernetes. On the research side, I'm a DL/ML researcher diving deep into machine learning and deep learning. Tech and Design Lead for the Google Developer Group on campus, Aspire Leaders Program alumnus (Harvard, Cohort 4 '25), and ColorStack Fellow. Beyond code, I'm a multi-disciplinary thinker — theatre, photography, soccer, piano, and guitar all have a place in my life too.`,
 
         workExperience: [
             {

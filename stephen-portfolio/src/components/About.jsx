@@ -138,7 +138,7 @@ const About = () => {
         }}>
           I am a Ghanaian Honor Scholar at DePauw University studying Computer Science,
           with a strong interest in software engineering and AI/ML/DL research.
-          I am an incoming DL/ML researcher and ITAP intern — drawn to building systems
+          I am a DL/ML researcher and incoming ITAP intern — drawn to building systems
           that are scalable, efficient, and built to last.
         </p>
 
