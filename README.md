@@ -46,7 +46,7 @@ This is deliberate — Firebase Hosting serves static files only, and rewriting 
 ```bash
 cd stephen-portfolio
 npm install
-npm run dev          # http://localhost:5173
+npm run dev           # http://localhost:5173
 ```
 
 Vite's dev server serves the frontend only. Since `aiService.js` points at the deployed Vercel URL, **the AI features work in local dev without running a backend** — they call production. To run the functions locally instead, use `vercel dev` and repoint those fetch calls.
@@ -131,7 +131,7 @@ portfolio/
     └── public/
 ```
 
-See [`stephen-portfolio/README.md`](stephen-portfolio/README.md) for API route details and build internals.
+See [`stephen-portfolio/README.md`](stephen-portfolio/README.md) for API route details and internals.
 
 ## License
 
