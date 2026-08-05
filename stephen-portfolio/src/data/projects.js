@@ -3,30 +3,30 @@ export const projects = [
         id: "monica",
         name: "MoNiCa.Ai",
         private: true,
-        tagline: "Mock Interview Conversational Assistant",
-        description: "A highly scalable, real-time, low-latency AI interviewing agent deployed as a microservices architecture. Leverages WebRTC for bi-directional media streaming, orchestrating FastAPI, LiveKit Agent SDK, Deepgram STT, Cartesia TTS, and Simli/Tavus visual rendering APIs to conduct realistic technical and behavioral interviews.",
+        tagline: "Real-Time AI Interview Coach",
+        description: "A real-time, low-latency AI interview platform that runs adaptive voice interviews, delivers live communication coaching, and generates private, actionable performance reports. Built around a React client, an async FastAPI backend, and a LiveKit agent pipeline (streaming speech-to-text → LLM → text-to-speech), deployed on Docker and Kubernetes.",
         link: "https://github.com/Stephen-Agyemang/MoNiCa.Ai",
-        skills: ["WebRTC", "FastAPI", "Python", "React", "LiveKit", "Docker", "Kubernetes", "Deepgram STT", "Cartesia TTS", "Supabase", "GPT-4.1", "Simli/Tavus"],
+        skills: ["React", "FastAPI", "Python", "WebRTC", "LiveKit", "Deepgram", "Cartesia", "PostgreSQL", "Redis", "Docker", "Kubernetes", "OpenAI"],
         demoType: "interview-simulation"
     },
     {
         id: "zork",
         name: "Zork v2",
-        tagline: "Futuristic OOP Cockpit Adventure",
-        description: "A full-stack, modernized text-adventure engine wrapping classic parser mechanics in a futuristic tactical cockpit dashboard. Features a Spring Boot REST API backed by a state-oriented routing game engine, pairing high-fidelity React HUD gauges (Cognitive Load, Thirst, Sanity) with live typing-pipeline interceptors.",
+        tagline: "Full-Stack Campus Text Adventure",
+        description: "A full-stack, terminal-style text adventure set across DePauw's campus. Players complete quests, manage inventory and hunger, race timed challenges, and save high scores to global and campus-only leaderboards — all backed by a Spring Boot REST API with session-isolated game state, so multiple players run independent games at once.",
         link: "https://github.com/Stephen-Agyemang/Zork-v2",
         liveUrl: "https://zork-v2.onrender.com",
-        skills: ["Java 21", "Spring Boot", "React", "Vanilla CSS", "REST API", "State Machine", "Maven", "Game Design"],
+        skills: ["Java 21", "Spring Boot", "Spring Data JPA", "PostgreSQL", "React", "Vite", "REST API", "Docker", "Maven", "GitHub Actions", "JUnit"],
         demoType: "zork-hud"
     },
     {
         id: "fridgejam",
         name: "FridgeJam",
         tagline: "Multimodal AI Leftovers Recipe Scanner",
-        description: "An interactive, AI-powered web app built for the GDG Coding Jam that transforms random fridge leftovers into personalized recipes. Leverages gemini-2.5-flash for real-time multimodal photo analysis, offering custom chef personalities, detailed macronutrient trackers, cozy mini-games, and dynamic cookbook PDF exporters.",
+        description: "An AI-powered cooking companion built for the GDG Coding Jam that turns leftover ingredients into personalized recipes. Uses Gemini's multimodal vision to scan fridge photos, then generates dietary-aware recipes, macro estimates, a 7-day meal planner, and exportable cookbook PDFs — wrapped in a cozy retro UI with a Firestore leaderboard mini-game.",
         link: "https://github.com/Stephen-Agyemang/FridgeJam",
         liveUrl: "https://fridgejam.web.app",
-        skills: ["Gemini AI", "FastAPI", "Python", "HTML5", "CSS3", "JavaScript", "Docker", "Google Cloud Run", "Serverless", "CORS-free"],
+        skills: ["Gemini AI", "FastAPI", "Python", "JavaScript", "HTML5", "CSS3", "Firebase", "Docker", "Google Cloud Run"],
         demoType: "chef-assistant"
     },
     /*

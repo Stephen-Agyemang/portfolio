@@ -11,7 +11,7 @@ import {
 const initialNodes = [
   // Project Nodes
   { id: "monica", label: "MoNiCa.Ai", isProject: true, x: 220, y: 160, color: "#a7d273", status: "Flagship AI", icon: "FaVideo" },
-  { id: "zork", label: "Zork v2", isProject: true, x: 500, y: 120, color: "#ffb300", status: "Cockpit HUD", icon: "FaGamepad" },
+  { id: "zork", label: "Zork v2", isProject: true, x: 500, y: 120, color: "#ffb300", status: "Campus RPG", icon: "FaGamepad" },
   { id: "fridgejam", label: "FridgeJam", isProject: true, x: 780, y: 180, color: "#f97316", status: "GDG Jam Win", icon: "FaUtensils" },
   // { id: "fintracker", label: "FinTracker", isProject: true, x: 320, y: 380, color: "#38bdf8", status: "CLI & Web", icon: "FaChartLine" },
   { id: "portfolio", label: "Portfolio", isProject: true, x: 620, y: 390, color: "#c084fc", status: "AI Assistant", icon: "FaPalette" },
@@ -28,28 +28,47 @@ const initialNodes = [
   { id: "kubernetes", label: "Kubernetes", isProject: false, x: 120, y: 330, color: "#326ce5", status: "Exploring", iconClass: "devicon-kubernetes-plain colored" },
   { id: "supabase", label: "Supabase", isProject: false, x: 450, y: 350, color: "#3ecf8e", status: "Database Log", iconClass: "devicon-postgresql-plain colored" },
   { id: "git", label: "Git", isProject: false, x: 740, y: 310, color: "#f05032", status: "Proficient", iconClass: "devicon-git-plain colored" },
-  { id: "c++", label: "C++", isProject: false, x: 820, y: 360, color: "#00599c", status: "Foundation", iconClass: "devicon-cplusplus-plain colored" }
+  { id: "c++", label: "C++", isProject: false, x: 820, y: 360, color: "#00599c", status: "Foundation", iconClass: "devicon-cplusplus-plain colored" },
+  { id: "javascript", label: "JavaScript", isProject: false, x: 360, y: 150, color: "#f0db4f", status: "Core Language", iconClass: "devicon-javascript-plain colored" },
+  { id: "postgresql", label: "PostgreSQL", isProject: false, x: 560, y: 340, color: "#336791", status: "Zork Leaderboards", iconClass: "devicon-postgresql-plain colored" },
+  { id: "redis", label: "Redis", isProject: false, x: 200, y: 380, color: "#d82c20", status: "MoNiCa Cache", iconClass: "devicon-redis-plain colored" },
+  { id: "firebase", label: "Firebase", isProject: false, x: 900, y: 250, color: "#ffca28", status: "Firestore Data", iconClass: "devicon-firebase-plain colored" },
+  { id: "cloudrun", label: "Cloud Run", isProject: false, x: 820, y: 90, color: "#4285f4", status: "Deployed API", iconClass: "devicon-googlecloud-plain colored" },
+  { id: "htmlcss", label: "HTML/CSS", isProject: false, x: 890, y: 320, color: "#e34f26", status: "FridgeJam UI", iconClass: "devicon-html5-plain colored" }
 ];
 
 // Edges (links) connecting Projects to Skills
 const initialLinks = [
+  // MoNiCa.Ai — flagship. Proficient: Python, React, FastAPI, WebRTC, Docker, Git.
+  // Familiar/supporting: Supabase, Redis, Kubernetes, JavaScript.
   { source: "monica", target: "webrtc" },
   { source: "monica", target: "fastapi" },
   { source: "monica", target: "python" },
   { source: "monica", target: "react" },
   { source: "monica", target: "docker" },
+  { source: "monica", target: "git" },
   { source: "monica", target: "kubernetes" },
   { source: "monica", target: "supabase" },
-  
+  { source: "monica", target: "redis" },
+  { source: "monica", target: "javascript" },
+
+  // Zork v2 — Java, Spring Boot, React, PostgreSQL, Docker.
   { source: "zork", target: "java" },
   { source: "zork", target: "springboot" },
   { source: "zork", target: "react" },
-  
+  { source: "zork", target: "postgresql" },
+  { source: "zork", target: "docker" },
+
+  // FridgeJam — JS, HTML/CSS, FastAPI, Python, Gemini, Firebase, Docker, Cloud Run.
   { source: "fridgejam", target: "gemini" },
   { source: "fridgejam", target: "fastapi" },
   { source: "fridgejam", target: "python" },
+  { source: "fridgejam", target: "javascript" },
+  { source: "fridgejam", target: "htmlcss" },
+  { source: "fridgejam", target: "firebase" },
   { source: "fridgejam", target: "docker" },
-  
+  { source: "fridgejam", target: "cloudrun" },
+
   /*
   { source: "fintracker", target: "fastapi" },
   { source: "fintracker", target: "python" },
@@ -270,7 +289,7 @@ const Skills = () => {
           <div className="skills-mobile-category">
             <h3>Frameworks & AI</h3>
             <div className="skills-mobile-grid">
-              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('react') || n.iconClass?.includes('spring') || n.iconClass?.includes('google') || n.id === 'webrtc' || n.id === 'fastapi')).map(n => (
+              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('react') || n.iconClass?.includes('spring') || n.iconClass?.includes('google') || n.iconClass?.includes('html5') || n.id === 'webrtc' || n.id === 'fastapi')).map(n => (
                 <div key={n.id} className="skills-mobile-card">
                   <i className={`${n.iconClass} skills-mobile-card-icon`} />
                   <div>
@@ -286,7 +305,7 @@ const Skills = () => {
           <div className="skills-mobile-category">
             <h3>DevOps & DB</h3>
             <div className="skills-mobile-grid">
-              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('docker') || n.iconClass?.includes('kubernetes') || n.iconClass?.includes('postgresql') || n.iconClass?.includes('git'))).map(n => (
+              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('docker') || n.iconClass?.includes('kubernetes') || n.iconClass?.includes('postgresql') || n.iconClass?.includes('git') || n.iconClass?.includes('firebase') || n.iconClass?.includes('redis'))).map(n => (
                 <div key={n.id} className="skills-mobile-card">
                   <i className={`${n.iconClass} skills-mobile-card-icon`} />
                   <div>
