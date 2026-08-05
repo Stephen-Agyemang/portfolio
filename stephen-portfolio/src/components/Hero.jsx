@@ -43,7 +43,7 @@ const Hero = () => {
                         fontSize: isMobile ? "3rem" : "7rem",
                         margin: 0,
                         lineHeight: 1.1,
-                        fontFamily: "var(--font-mono)",
+                        fontFamily: "'Courier New', Courier, monospace",
                         color: "var(--hero-text-green)",
                         alignSelf: "center",
                         textAlign: "center",
