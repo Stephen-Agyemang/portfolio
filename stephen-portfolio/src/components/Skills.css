@@ -12,7 +12,7 @@
   color: #ffffff;
   margin: 0;
   text-align: left;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: var(--font-mono);
 }
 
 /* Container for the Graph Board */
@@ -175,7 +175,7 @@
   color: rgba(255, 255, 255, 0.6);
   z-index: 5;
   pointer-events: none;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: var(--font-mono);
 }
 
 /* Mobile responsive fallback: switches to clean vertical list */
@@ -221,7 +221,7 @@
     margin: 0 0 12px;
     font-size: 1.1rem;
     color: var(--color-monica);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: 1.5px solid var(--card-border);
@@ -265,7 +265,7 @@
   .skills-mobile-card-status {
     font-size: 0.52rem;
     color: var(--color-monica);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     display: block;
     margin-top: 1px;
     opacity: 0.85;

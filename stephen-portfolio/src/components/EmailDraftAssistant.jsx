@@ -61,7 +61,7 @@ const EmailDraftAssistant = () => {
             <h2 className="section-title-neon" style={{
                 fontSize: isMobile ? "1.8rem" : "2.5rem",
                 marginBottom: "12px",
-                fontFamily: "'Courier New', Courier, monospace"
+                fontFamily: "var(--font-mono)"
             }}>
                 Email Draft Assistant
             </h2>

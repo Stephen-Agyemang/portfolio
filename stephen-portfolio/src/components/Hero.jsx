@@ -15,7 +15,7 @@ const Hero = () => {
                         fontSize: isMobile ? "1.2rem" : "2rem",
                         margin: 0,
                         lineHeight: 1.5,
-                        fontFamily: "'Courier New', Courier, monospace",
+                        fontFamily: "var(--font-mono)",
                         color: "var(--hero-text-grey)",
                         alignSelf: "flex-start",
                         transition: "color 0.4s ease"
@@ -28,7 +28,7 @@ const Hero = () => {
                         fontSize: isMobile ? "2.5rem" : "5rem",
                         margin: 0,
                         lineHeight: 1.1,
-                        fontFamily: "'Courier New', Courier, monospace",
+                        fontFamily: "var(--font-mono)",
                         color: "var(--hero-text-white)",
                         alignSelf: "flex-start",
                         marginLeft: isMobile ? "40px" : "100px",
@@ -43,7 +43,7 @@ const Hero = () => {
                         fontSize: isMobile ? "3rem" : "7rem",
                         margin: 0,
                         lineHeight: 1.1,
-                        fontFamily: "'Courier New', Courier, monospace",
+                        fontFamily: "var(--font-mono)",
                         color: "var(--hero-text-green)",
                         alignSelf: "center",
                         textAlign: "center",
@@ -91,7 +91,7 @@ const Hero = () => {
                             boxShadow: "0 0 8px var(--color-monica)",
                         }} />
                         <span style={{
-                            fontFamily: "'Courier New', Courier, monospace",
+                            fontFamily: "var(--font-mono)",
                             fontSize: "0.72rem",
                             fontWeight: "bold",
                             color: "var(--text-title)",
@@ -106,7 +106,7 @@ const Hero = () => {
                     {/* Location item */}
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{
-                            fontFamily: "'Courier New', Courier, monospace",
+                            fontFamily: "var(--font-mono)",
                             fontSize: "0.72rem",
                             color: "var(--hero-text-grey)",
                             letterSpacing: "0.5px"
@@ -120,7 +120,7 @@ const Hero = () => {
                     {/* Focus / Backend Aspirations item */}
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{
-                            fontFamily: "'Courier New', Courier, monospace",
+                            fontFamily: "var(--font-mono)",
                             fontSize: "0.72rem",
                             color: "var(--hero-text-grey)",
                             letterSpacing: "0.5px"

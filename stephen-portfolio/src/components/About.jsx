@@ -92,7 +92,7 @@ const About = () => {
           position: "absolute",
           bottom: "12px",
           right: "12px",
-          fontFamily: "'Courier New', Courier, monospace",
+          fontFamily: "var(--font-mono)",
           fontSize: "0.6rem",
           background: "var(--chat-input-bg)",
           color: "var(--email-label)",
@@ -126,7 +126,7 @@ const About = () => {
         <h2 className="section-title-neon" style={{
           fontSize: isMobile ? "2rem" : "3rem",
           marginBottom: "20px",
-          fontFamily: "'Courier New', Courier, monospace"
+          fontFamily: "var(--font-mono)"
         }}>
           About Me
         </h2>

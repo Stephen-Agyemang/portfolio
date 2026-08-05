@@ -32,7 +32,7 @@ const Projects = () => {
             <h2 className="section-title-neon" style={{
                 fontSize: isMobile ? "2rem" : "3rem",
                 marginBottom: isMobile ? "24px" : "40px",
-                fontFamily: "'Courier New', Courier, monospace"
+                fontFamily: "var(--font-mono)"
             }}
             >
                 Projects
@@ -74,7 +74,7 @@ const Projects = () => {
                                     boxShadow: `0 0 10px ${themeColor}, 0 0 4px ${themeColor}`,
                                 }} />
                                 <span style={{
-                                    fontFamily: "'Courier New', Courier, monospace",
+                                    fontFamily: "var(--font-mono)",
                                     fontSize: "0.58rem",
                                     color: "var(--telemetry-color)",
                                     fontWeight: "bold",
@@ -96,7 +96,7 @@ const Projects = () => {
                                 </h3>
                                 {project.private && (
                                     <span style={{
-                                        fontFamily: "'Courier New', Courier, monospace",
+                                        fontFamily: "var(--font-mono)",
                                         fontSize: "0.58rem",
                                         fontWeight: "700",
                                         letterSpacing: "1px",
@@ -116,7 +116,7 @@ const Projects = () => {
                                 color: themeColor,
                                 fontWeight: "600",
                                 marginBottom: "12px",
-                                fontFamily: "'Courier New', Courier, monospace"
+                                fontFamily: "var(--font-mono)"
                             }}>
                                 {project.tagline}
                             </p>

@@ -184,7 +184,7 @@ const ProjectDiscovery = () => {
                         alignItems: "center",
                         gap: "10px",
                         borderBottom: "1px solid var(--chat-border)",
-                        fontFamily: "'Courier New', Courier, monospace",
+                        fontFamily: "var(--font-mono)",
                         letterSpacing: "0.5px"
                     }}>
                         <FaRobot className="blink-led" style={{ color: "var(--chat-user-text)" }} />
@@ -240,7 +240,7 @@ const ProjectDiscovery = () => {
                                     fontSize: "0.82rem",
                                     lineHeight: "1.45",
                                     wordBreak: "break-word",
-                                    fontFamily: msg.type === 'bot' ? "'Inter', sans-serif" : "'Courier New', Courier, monospace",
+                                    fontFamily: msg.type === 'bot' ? "'Inter', sans-serif" : "var(--font-mono)",
                                     transition: "all 0.3s ease"
                                 }}>
                                     {msg.content}
@@ -283,7 +283,7 @@ const ProjectDiscovery = () => {
                             </div>
                         ))}
                         {loading && (
-                            <div style={{ alignSelf: "flex-start", color: "var(--chat-user-text)", fontSize: "0.78rem", marginLeft: "10px", fontFamily: "'Courier New', Courier, monospace" }} className="blink-led">
+                            <div style={{ alignSelf: "flex-start", color: "var(--chat-user-text)", fontSize: "0.78rem", marginLeft: "10px", fontFamily: "var(--font-mono)" }} className="blink-led">
                                 SEC_AI // Thinking...
                             </div>
                         )}

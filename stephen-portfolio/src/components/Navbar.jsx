@@ -67,7 +67,7 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
     textDecoration: "none",
     fontWeight: 600,
     fontSize: isMobile ? "0.85rem" : "1.02rem",
-    fontFamily: "'DM Mono', 'Courier New', monospace",
+    fontFamily: "'DM Mono', var(--font-mono)",
     padding: isMobile ? "4px 6px" : "6px 10px",
     borderRadius: "6px",
     transition: "color 160ms ease, background-color 160ms ease, border-bottom 160ms ease",
