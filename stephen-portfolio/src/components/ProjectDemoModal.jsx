@@ -220,101 +220,204 @@ const MonicaAiDemo = () => {
 };
 
 // ============================================================
-// 2. Zork Tactical OS Cockpit (Exact 1:1 Visual Clone)
+// 2. Zork v2 — DePauw Campus Text Adventure Terminal
 // ============================================================
 const ZorkV2Demo = () => {
+  const THEMES = [
+    { name: 'Amber', color: '#ffb300' },
+    { name: 'Sage', color: '#6c9a57' },
+    { name: 'Cyan', color: '#0899e7' },
+    { name: 'Rose', color: '#e83e8c' },
+    { name: 'Violet', color: '#c084fc' },
+  ];
+
+  const INITIAL_QUESTS = [
+    { name: 'Ring the Bell Tower', status: 'ACTIVE' },
+    { name: 'Recover Library Key', status: 'LOCKED' },
+    { name: 'Feed the Campus Cat', status: 'OPEN' },
+    { name: 'Beat the Lab Timer', status: 'LOCKED' },
+  ];
+
+  const [accent, setAccent] = useState('#ffb300');
+  const [sessionId] = useState(() => Math.random().toString(16).slice(2, 6).toUpperCase());
+  const callsign = 'TIGER-7';
+
   const [consoleLogs, setConsoleLogs] = useState([
-    "10:04:00 TACTICAL TERMINAL CORE INITIALIZED.",
-    "10:04:04 You stand in the Great Hall. The air is cold, smelling of ancient stone and fresh ink.",
-    "10:04:08 Type \"examine help\" to view operational manual commands."
+    "SYS  DePauw Text Adventure v2 — session booted.",
+    "LOC  Bowman Park. Morning fog clings to the quad; the bell tower looms east.",
+    "TIP  Type \"help\" for commands, or tap a quick action below."
   ]);
   const [inputVal, setInputVal] = useState('');
-  const [thirst, setThirst] = useState(0);
-  const [sanity, setSanity] = useState(95);
-  const [cogLoad, setCogLoad] = useState(17);
-  const [interceptor, setInterceptor] = useState(false);
+  const [location, setLocation] = useState('Bowman Park');
+
+  const [hunger, setHunger] = useState(18);
+  const [stamina, setStamina] = useState(92);
+  const [score, setScore] = useState(0);
+
+  const [inventory, setInventory] = useState([
+    { name: 'Campus Map', status: 'HELD' },
+    { name: 'Meal Swipe', status: 'x2' },
+  ]);
+  const [quests, setQuests] = useState(INITIAL_QUESTS);
+  const totalQuests = 8;
+  const questsDone = quests.filter(q => q.status === 'DONE').length;
+
+  // Timed lock-pick challenge
+  const [challengeActive, setChallengeActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(12);
   const [typedChallenge, setTypedChallenge] = useState('');
-  const challengeTarget = "FASTAPI SECURE ROUTE SYNC";
+  const challengeTarget = 'UNLOCK ROY O WEST';
+
+  // Leaderboard overlay
+  const [boardOpen, setBoardOpen] = useState(false);
+  const [boardTab, setBoardTab] = useState('global');
+
+  const rank = score >= 280 ? 'Honor Scholar'
+    : score >= 180 ? 'Senior'
+    : score >= 100 ? 'Junior'
+    : score >= 40 ? 'Sophomore'
+    : 'Freshman';
+
+  const pushLog = (...lines) => setConsoleLogs(prev => [...prev, ...lines]);
+
+  // Countdown driver for the timed challenge. All state changes happen inside
+  // the timer callback (not the effect body) so we don't trigger cascading renders.
+  useEffect(() => {
+    if (!challengeActive) return undefined;
+    const t = setTimeout(() => {
+      if (timeLeft <= 1) {
+        setChallengeActive(false);
+        setStamina(p => Math.max(0, p - 15));
+        pushLog("CHAL ⏱ Time's up — the gate re-locks. (-15 stamina)");
+      } else {
+        setTimeLeft(v => v - 1);
+      }
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [challengeActive, timeLeft]);
+
+  const moveCost = () => {
+    setHunger(p => Math.min(100, p + 6));
+    setStamina(p => Math.max(0, p - 5));
+  };
 
   const handleCommand = (e) => {
     e.preventDefault();
-    if (!inputVal.trim()) return;
-
-    const cmd = inputVal.trim().toLowerCase();
+    const raw = inputVal.trim();
+    if (!raw) return;
+    const cmd = raw.toLowerCase();
     setInputVal('');
+    const echo = "> " + raw.toUpperCase();
 
-    let reply = `Type "examine help" to view operational manual commands.`;
-    let thirstIncrease = 5;
-    let sanityDecrease = 2;
-
-    if (cmd === 'examine help' || cmd === 'help') {
-      reply = "AVAILABLE COMMAND SEQUENCES: [LOOK], [MOVE NORTH], [TAKE ALL], [INV_SCR], [MAP_BIOS].";
-      thirstIncrease = 1;
-      sanityDecrease = 0;
+    if (cmd === 'help' || cmd === 'examine help') {
+      pushLog(echo, "CMD  look · go <dir> · take <item> · open <container> · eat <item> · inventory · quests · map · leaderboard");
     } else if (cmd === 'look') {
-      reply = "Scanning immediate sector... Grand wood-framed arches extend along towering stone structures of DePauw University. A heavy locked iron gate is visible north.";
-    } else if (cmd === 'move north' || cmd === 'go north') {
-      reply = "⚠️ ROUTING SECTOR BLOCKED: FastAPI dynamic route interceptor has locked parser pipelines! Complete security challenge to unseal iron gate.";
-      setInterceptor(true);
+      pushLog(echo, `LOC  ${location}. Ivy-draped brick, a notice board, paths branch north toward Roy O. West Library.`);
+    } else if (cmd === 'map') {
+      pushLog(echo, `MAP  15 locations charted · here: ${location} · COORDS 39.6407°N, 86.8620°W`);
+    } else if (cmd === 'inventory' || cmd === 'inv') {
+      pushLog(echo, "BAG  " + inventory.map(i => i.name).join(', '));
+    } else if (cmd === 'quests') {
+      const active = quests.filter(q => q.status === 'ACTIVE').map(q => q.name).join(', ') || 'none';
+      pushLog(echo, `LOG  ${questsDone}/${totalQuests} complete — active: ${active}`);
+    } else if (cmd === 'leaderboard' || cmd === 'scores') {
+      setBoardOpen(true);
+      pushLog(echo, "NET  Fetching global + DePauw boards…");
+    } else if (cmd.includes('north')) {
+      moveCost();
+      pushLog(echo, "⚠  Roy O. West is locked after hours — a timed lock-pick challenge begins!");
+      setTimeLeft(12);
       setTypedChallenge('');
-      return;
-    } else if (cmd === 'take all') {
-      reply = "Harvesting items... Checked 2 objects: Cargo Manifest updated.";
-    } else if (cmd === 'inv_scr' || cmd === 'inventory') {
-      reply = "CARGO_MANIFEST ITEMS: 1x [HELP GUIDE], 1x [FOOD COUPON].";
-    } else if (cmd === 'map_bios') {
-      reply = "SECTOR: JULIAN // COORDS: 39.6488°N, 86.8571°W // EST_CLOCK: 00:00:15";
+      setChallengeActive(true);
+    } else if (cmd.startsWith('go ') || cmd === 'south' || cmd === 'east' || cmd === 'west') {
+      moveCost();
+      setLocation('Julian Science Center');
+      pushLog(echo, "LOC  You cross the quad and reach Julian Science Center. A cold lab hums nearby.");
+    } else if (cmd.startsWith('take')) {
+      const item = (raw.split(' ').slice(1).join(' ') || 'ID Card').replace(/\b\w/g, c => c.toUpperCase());
+      setInventory(prev => prev.some(i => i.name.toLowerCase() === item.toLowerCase()) ? prev : [...prev, { name: item, status: 'HELD' }]);
+      setScore(s => s + 10);
+      pushLog(echo, `GET  You pocket the ${item}. (+10 score)`);
+    } else if (cmd.startsWith('open')) {
+      const target = raw.split(' ').slice(1).join(' ') || 'locker';
+      setInventory(prev => prev.some(i => i.name === 'Rusty Key') ? prev : [...prev, { name: 'Rusty Key', status: 'HELD' }]);
+      setScore(s => s + 5);
+      pushLog(echo, `OPN  The ${target} creaks open — a Rusty Key rests inside. (+5 score)`);
+    } else if (cmd.startsWith('eat') || cmd.startsWith('use')) {
+      setHunger(p => Math.max(0, p - 25));
+      setStamina(p => Math.min(100, p + 10));
+      pushLog(echo, "EAT  You refuel. Hunger drops, stamina recovers.");
+    } else {
+      setHunger(p => Math.min(100, p + 2));
+      pushLog(echo, "ERR  The parser doesn't understand that. Try \"help\".");
     }
-
-    setThirst(prev => Math.min(100, prev + thirstIncrease));
-    setSanity(prev => Math.max(0, prev - sanityDecrease));
-    setCogLoad(prev => Math.min(100, prev + 8));
-
-    setConsoleLogs(prev => [
-      ...prev,
-      `10:05:00 > ${cmd.toUpperCase()}`,
-      `10:05:01 ${reply}`
-    ]);
   };
 
   const handleChallengeSubmit = (e) => {
     e.preventDefault();
-    if (typedChallenge === challengeTarget) {
-      setInterceptor(false);
-      setSanity(prev => Math.min(100, prev + 15));
-      setCogLoad(prev => Math.max(0, prev - 10));
-      setThirst(prev => Math.min(100, prev + 2));
-      setConsoleLogs(prev => [
-        ...prev,
-        `10:05:12 ✓ SECURITY TYPING CHALLENGE VERIFIED successfully.`,
-        `10:05:14 [PIPELINE SECTOR RESUMED] Route unsealed. Gate uncoupled. You step into the quad.`
-      ]);
+    if (typedChallenge.trim().toUpperCase() === challengeTarget) {
+      const gained = 25 + timeLeft * 2;
+      setChallengeActive(false);
+      setScore(s => s + gained);
+      setStamina(p => Math.max(0, p - 5));
+      setLocation('Roy O. West Library');
+      setQuests(prev => prev.map(q => q.name === 'Recover Library Key' ? { ...q, status: 'DONE' } : q));
+      pushLog(`CHAL ✓ Lock sprung with ${timeLeft}s to spare! (+${gained} score)`, "LOC  You slip into Roy O. West Library. Quest complete.");
     } else {
-      setSanity(prev => Math.max(0, prev - 12));
-      setConsoleLogs(prev => [
-        ...prev,
-        `10:05:12 ✗ ERROR: SECURE CHALLENGE INVALID. ATTEMPT MATCH FAILED.`
-      ]);
+      setStamina(p => Math.max(0, p - 8));
+      setTypedChallenge('');
+      pushLog("CHAL ✗ Wrong sequence — the tumblers reset. (-8 stamina)");
     }
   };
 
+  const boardBase = boardTab === 'global'
+    ? [{ tag: 'NOVA-1', score: 420 }, { tag: 'BYTE-9', score: 355 }, { tag: 'ECHO-4', score: 290 }, { tag: 'PIXL-8', score: 140 }]
+    : [{ tag: 'TIGER-3', score: 310 }, { tag: 'HALL-5', score: 150 }, { tag: 'QUAD-2', score: 70 }];
+  const board = [...boardBase, { tag: `${callsign} (you)`, score, you: true }]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+
+  const quickCmds = ['look', 'go north', 'take id-card', 'open locker', 'eat sandwich', 'quests', 'leaderboard'];
+
   return (
     <div className="zork-cockpit">
-      {/* 1. Left Icon strip */}
+      {/* 1. Left icon + theme strip */}
       <div className="zork-sidebar-strip">
-        <div className="zork-sidebar-icon active" title="OPERATOR PROFILE"><FaUserCheck /></div>
-        <div className="zork-sidebar-icon" title="STATISTICS"><FaSignal /></div>
-        <div className="zork-sidebar-icon" title="CARGO MANIFEST"><FaSlidersH /></div>
-        <div className="zork-sidebar-icon" title="SATELLITE VIEW"><FaCompass /></div>
+        <div className="zork-sidebar-icon active" title="ADVENTURER" style={{ color: accent, background: `color-mix(in srgb, ${accent} 10%, transparent)` }}><FaUserCheck /></div>
+        <div className="zork-sidebar-icon" title="QUEST LOG"><FaCheckCircle /></div>
+        <div className="zork-sidebar-icon" title="INVENTORY"><FaSlidersH /></div>
+        <div className="zork-sidebar-icon" title="CAMPUS MAP"><FaCompass /></div>
+        <div className="zork-sidebar-icon" title="LEADERBOARD" onClick={() => setBoardOpen(true)}><FaChartLine /></div>
+
         <div style={{ flex: 1 }}></div>
-        <div 
-          className="zork-sidebar-icon" 
-          title="REBOOT SYSTEM" 
+
+        {/* Five visual themes */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', marginBottom: '8px' }} title="Visual themes">
+          {THEMES.map(t => (
+            <button
+              key={t.name}
+              onClick={() => setAccent(t.color)}
+              aria-label={`${t.name} theme`}
+              style={{
+                width: '14px', height: '14px', borderRadius: '50%', cursor: 'pointer', padding: 0,
+                background: t.color,
+                border: accent === t.color ? '2px solid #fff' : '1px solid rgba(255,255,255,0.2)',
+                boxShadow: accent === t.color ? `0 0 8px ${t.color}` : 'none'
+              }}
+            />
+          ))}
+        </div>
+
+        <div
+          className="zork-sidebar-icon"
+          title="REBOOT SESSION"
           onClick={() => {
-            setConsoleLogs(["10:00:00 REBOOTING TERMINAL...", "10:00:02 COCKPIT BOOT SEQUENCE SECURE."]);
-            setThirst(0);
-            setSanity(95);
-            setCogLoad(17);
+            setConsoleLogs(["SYS  Rebooting… a fresh isolated session spins up.", "LOC  Bowman Park. The fog rolls back in."]);
+            setHunger(18); setStamina(92); setScore(0);
+            setLocation('Bowman Park');
+            setChallengeActive(false); setBoardOpen(false);
+            setInventory([{ name: 'Campus Map', status: 'HELD' }, { name: 'Meal Swipe', status: 'x2' }]);
+            setQuests(INITIAL_QUESTS);
           }}
           style={{ color: '#ff5e5e' }}
         >
@@ -322,61 +425,94 @@ const ZorkV2Demo = () => {
         </div>
       </div>
 
-      {/* 2. Main Terminal Panel */}
+      {/* 2. Center terminal */}
       <div className="zork-screen-panel">
-        <div className="zork-panel-title">
-          <span>TACTICAL_LOG_SYSTEM</span>
-          <span style={{ fontSize: '0.65rem', color: '#8c8c8c' }}>SECTOR: JULIAN // COORDS: 39.6488°N, 86.8571°W</span>
+        <div className="zork-panel-title" style={{ color: accent }}>
+          <span>DEPAUW_TEXT_ADVENTURE</span>
+          <span style={{ fontSize: '0.62rem', color: '#8c8c8c' }}>SESSION #{sessionId} · ISOLATED</span>
         </div>
-        
+
         <div className="zork-screen-scroller">
           {consoleLogs.map((log, idx) => (
-            <div key={idx} style={{ marginBottom: '8px', color: log.includes('>') ? '#ffb300' : (log.includes('⚠️') ? '#ff5e5e' : '#cbd5e1') }}>{log}</div>
+            <div key={idx} style={{ marginBottom: '6px', color: log.startsWith('>') ? accent : (log.includes('⚠') || log.includes('✗') || log.startsWith('ERR')) ? '#ff5e5e' : (log.includes('✓') ? '#6c9a57' : '#cbd5e1') }}>
+              {log}
+            </div>
           ))}
         </div>
 
-        {interceptor ? (
-          <form className="typing-interceptor-overlay" onSubmit={handleChallengeSubmit} style={{ marginBottom: '16px', background: 'rgba(255, 94, 94, 0.05)', border: '1px solid #ff5e5e' }}>
-            <div style={{ color: '#ff5e5e', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '4px' }}>
-              ⚠️ ROUTING INTERRUPT: CHALLENGE ACTIVE
+        {challengeActive ? (
+          <form onSubmit={handleChallengeSubmit} style={{ marginBottom: '16px', background: 'rgba(255, 94, 94, 0.05)', border: '1px solid #ff5e5e', borderRadius: '8px', padding: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#ff5e5e', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '6px' }}>
+              <span>⏱ TIMED CHALLENGE</span>
+              <span>{timeLeft}s</span>
             </div>
-            <p style={{ margin: '0 0 6px', fontSize: '0.65rem', color: '#c0d1e5' }}>Verify manual overrides. Type exactly:</p>
-            <div style={{ color: '#fff', fontSize: '0.8rem', padding: '6px', background: '#000', marginBottom: '8px', border: '1px dashed #ff5e5e', textAlign: 'center' }}>
+            <p style={{ margin: '0 0 6px', fontSize: '0.65rem', color: '#c0d1e5' }}>Type the unlock sequence before the timer expires — faster clears earn more points:</p>
+            <div style={{ color: '#fff', fontSize: '0.8rem', padding: '6px', background: '#000', marginBottom: '8px', border: '1px dashed #ff5e5e', textAlign: 'center', letterSpacing: '1px' }}>
               {challengeTarget}
             </div>
-            <input 
+            <input
               type="text"
               value={typedChallenge}
               onChange={(e) => setTypedChallenge(e.target.value)}
-              placeholder="Awaiting credentials..."
-              className="hud-cli-field"
-              style={{ background: '#02040b', width: '100%', boxSizing: 'border-box', border: '1px solid #ff5e5e', padding: '8px', fontSize: '0.8rem', color: '#fff' }}
+              placeholder="Type here and press Enter…"
+              style={{ background: '#02040b', width: '100%', boxSizing: 'border-box', border: '1px solid #ff5e5e', padding: '8px', fontSize: '0.8rem', color: '#fff', fontFamily: 'inherit' }}
               autoFocus
             />
           </form>
+        ) : boardOpen ? (
+          <div style={{ marginBottom: '16px', background: '#02040b', border: `1px solid ${accent}`, borderRadius: '8px', padding: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <span style={{ color: accent, fontWeight: 'bold', fontSize: '0.8rem' }}>🏆 LEADERBOARD</span>
+              <button onClick={() => setBoardOpen(false)} style={{ background: 'none', border: 'none', color: '#8c8c8c', cursor: 'pointer', fontSize: '0.7rem', fontFamily: 'inherit' }}>CLOSE ✕</button>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+              {['global', 'depauw'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setBoardTab(tab)}
+                  style={{
+                    flex: 1, padding: '6px', fontFamily: 'inherit', fontSize: '0.65rem', fontWeight: 'bold',
+                    textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px',
+                    border: `1px solid ${boardTab === tab ? accent : '#1a2c42'}`,
+                    background: boardTab === tab ? `color-mix(in srgb, ${accent} 15%, transparent)` : 'transparent',
+                    color: boardTab === tab ? accent : '#8c8c8c'
+                  }}
+                >
+                  {tab === 'global' ? 'Global' : 'DePauw Only'}
+                </button>
+              ))}
+            </div>
+            {board.map((row, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderRadius: '4px', marginBottom: '4px', fontSize: '0.72rem', background: row.you ? `color-mix(in srgb, ${accent} 12%, transparent)` : '#010309', border: row.you ? `1px solid ${accent}` : '1px solid #111a2e', color: row.you ? accent : '#cbd5e1' }}>
+                <span>#{i + 1} &nbsp; {row.tag}</span>
+                <span style={{ fontWeight: 'bold' }}>{row.score}</span>
+              </div>
+            ))}
+            <p style={{ margin: '8px 0 0', fontSize: '0.58rem', color: '#6b7280' }}>best-score dedup · server-validated</p>
+          </div>
         ) : (
           <form className={`zork-hud-prompt ${inputVal ? 'focused' : ''}`} onSubmit={handleCommand}>
-            <span>&gt;</span>
-            <input 
+            <span style={{ color: accent }}>&gt;</span>
+            <input
               type="text"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
-              placeholder="INITIATE COMMAND SEQUENCE..."
+              placeholder="TYPE A COMMAND…"
               className="zork-hud-input"
             />
           </form>
         )}
 
-        {/* Quick action helper buttons from screenshot */}
+        {/* Quick command chips */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
-          {['examine help', 'look', 'move north', 'take all', 'inv_scr', 'map_bios'].map((btnCmd) => (
+          {quickCmds.map((btnCmd) => (
             <button
               key={btnCmd}
-              onClick={() => { setInputVal(btnCmd); }}
+              onClick={() => setInputVal(btnCmd)}
               style={{
-                background: 'rgba(255, 179, 0, 0.05)',
-                border: '1px solid #2c3e50',
-                color: '#ffb300',
+                background: `color-mix(in srgb, ${accent} 6%, transparent)`,
+                border: `1px solid color-mix(in srgb, ${accent} 30%, #2c3e50)`,
+                color: accent,
                 fontSize: '0.65rem',
                 fontFamily: 'inherit',
                 borderRadius: '4px',
@@ -391,57 +527,61 @@ const ZorkV2Demo = () => {
         </div>
       </div>
 
-      {/* 3. Right Status Panel */}
+      {/* 3. Right HUD */}
       <div className="zork-hud-panel">
-        <div className="zork-panel-title">HUD_VT_SYSTEMS</div>
-        
+        {/* Player identity */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
+          <div className="zork-gauge-box" style={{ flex: 1, textAlign: 'center' }}>
+            <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>SCORE</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 'bold', color: accent }}>{score}</div>
+          </div>
+          <div className="zork-gauge-box" style={{ flex: 1.4, textAlign: 'center' }}>
+            <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>RANK</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: accent, marginTop: '4px' }}>{rank}</div>
+          </div>
+        </div>
+        <div style={{ fontSize: '0.62rem', color: '#8c8c8c', textAlign: 'center', marginTop: '-6px' }}>
+          CALLSIGN <strong style={{ color: '#cbd5e1' }}>{callsign}</strong> · {location}
+        </div>
+
+        {/* Gauges */}
         <div className="zork-gauge-box">
-          <div className="zork-gauge-label">
-            <span>NEURAL_LOAD</span>
-            <span>{cogLoad}%</span>
-          </div>
+          <div className="zork-gauge-label"><span>HUNGER</span><span>{hunger}%</span></div>
           <div className="zork-gauge-bar-bg">
-            <div className="zork-gauge-bar-fill" style={{ width: `${cogLoad}%`, background: cogLoad > 60 ? '#ff5e5e' : '#ffb300' }}></div>
+            <div className="zork-gauge-bar-fill" style={{ width: `${hunger}%`, background: hunger > 65 ? '#ff5e5e' : accent, boxShadow: `0 0 8px ${hunger > 65 ? 'rgba(255,94,94,0.6)' : 'rgba(255,179,0,0.4)'}` }}></div>
           </div>
         </div>
-
         <div className="zork-gauge-box">
-          <div className="zork-gauge-label">
-            <span>THIRST</span>
-            <span>{thirst}%</span>
-          </div>
+          <div className="zork-gauge-label"><span>STAMINA</span><span>{stamina}%</span></div>
           <div className="zork-gauge-bar-bg">
-            <div className="zork-gauge-bar-fill" style={{ width: `${thirst}%`, background: thirst > 50 ? '#ffb300' : '#ffb300' }}></div>
+            <div className="zork-gauge-bar-fill" style={{ width: `${stamina}%`, background: stamina < 30 ? '#ff5e5e' : accent }}></div>
           </div>
         </div>
-
         <div className="zork-gauge-box">
-          <div className="zork-gauge-label">
-            <span>SANITY</span>
-            <span>{sanity}%</span>
-          </div>
+          <div className="zork-gauge-label"><span>QUEST PROGRESS</span><span>{questsDone}/{totalQuests}</span></div>
           <div className="zork-gauge-bar-bg">
-            <div className="zork-gauge-bar-fill" style={{ width: `${sanity}%`, background: sanity < 40 ? '#ff5e5e' : '#ffb300' }}></div>
+            <div className="zork-gauge-bar-fill" style={{ width: `${(questsDone / totalQuests) * 100}%`, background: accent }}></div>
           </div>
         </div>
 
-        {/* Cargo manifest */}
-        <div className="zork-panel-title" style={{ marginTop: '16px' }}>CARGO_MANIFEST</div>
-        <div className="zork-manifest-item">
-          <span>HELP GUIDE</span>
-          <span style={{ color: '#6c9a57' }}>AVAIL</span>
-        </div>
-        <div className="zork-manifest-item">
-          <span>FOOD COUPON</span>
-          <span style={{ color: '#6c9a57' }}>VALID</span>
-        </div>
+        {/* Inventory */}
+        <div className="zork-panel-title" style={{ marginTop: '4px', color: accent }}>INVENTORY</div>
+        {inventory.map((item, i) => (
+          <div key={i} className="zork-manifest-item">
+            <span>{item.name}</span>
+            <span style={{ color: '#6c9a57' }}>{item.status}</span>
+          </div>
+        ))}
 
-        {/* Active Priorities checklist */}
-        <div className="zork-panel-title" style={{ marginTop: '16px' }}>ACTIVE_PRIORITIES</div>
+        {/* Quests */}
+        <div className="zork-panel-title" style={{ marginTop: '4px', color: accent }}>QUEST_LOG</div>
         <div style={{ fontSize: '0.7rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div>🛡️ THE MUSIC SHOW <span style={{ color: '#ffb300', float: 'right' }}>PENDING</span></div>
-          <div>🧬 DNA DELIVERY <span style={{ color: '#ffb300', float: 'right' }}>UNRESOLVED</span></div>
-          <div>🐾 WILDLIFE OPS <span style={{ color: '#ff5e5e', float: 'right' }}>SEC_LOCK</span></div>
+          {quests.map((q, i) => (
+            <div key={i}>
+              {q.status === 'DONE' ? '✓' : '•'} {q.name}
+              <span style={{ float: 'right', color: q.status === 'DONE' ? '#6c9a57' : q.status === 'LOCKED' ? '#ff5e5e' : '#ffb300' }}>{q.status}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
