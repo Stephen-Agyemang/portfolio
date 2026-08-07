@@ -15,7 +15,7 @@ const Hero = () => {
                         fontSize: isMobile ? "1.2rem" : "2rem",
                         margin: 0,
                         lineHeight: 1.5,
-                        fontFamily: "var(--font-mono)",
+                        fontFamily: "'Courier New', Courier, monospace",
                         color: "var(--hero-text-grey)",
                         alignSelf: "flex-start",
                         transition: "color 0.4s ease"
@@ -28,14 +28,14 @@ const Hero = () => {
                         fontSize: isMobile ? "2.5rem" : "5rem",
                         margin: 0,
                         lineHeight: 1.1,
-                        fontFamily: "var(--font-mono)",
+                        fontFamily: "'Courier New', Courier, monospace",
                         color: "var(--hero-text-white)",
                         alignSelf: "flex-start",
                         marginLeft: isMobile ? "40px" : "100px",
                         transition: "color 0.4s ease"
                     }}
                 >
-                    I'm
+                    I&apos;<span style={{ color: "#e67e34" }}>m</span>
                 </h1>
 
                 <h1
@@ -174,7 +174,7 @@ const Hero = () => {
 
                 {/* Resume */}
                 <a
-                    href="https://drive.google.com/file/d/1Web3VDvf_o3d8sOwb2aQrI43sIxOxeqb/view?usp=sharing"
+                    href="https://drive.google.com/file/d/1vK29Z97n_ns20CXj42SFZ7NkEkuK0SLr/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hero-social-link"
