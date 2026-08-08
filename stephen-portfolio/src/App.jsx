@@ -78,7 +78,7 @@ function App() {
       background: "var(--bg-color)",
       color: "var(--text-color)",
       minHeight: '100vh',
-      fontFamily: "'Inter', sans-serif",
+      fontFamily: "var(--font-mono)",
       position: "relative",
       overflow: "hidden",
       transition: "background 0.4s ease, color 0.4s ease"

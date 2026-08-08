@@ -126,7 +126,7 @@
 
 .graph-node-label {
   font-size: 0.68rem;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-mono);
   color: var(--text-color);
   text-align: center;
   font-weight: 600;

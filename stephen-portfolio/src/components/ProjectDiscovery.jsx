@@ -238,7 +238,7 @@ const ProjectDiscovery = () => {
                                     fontSize: "0.82rem",
                                     lineHeight: "1.45",
                                     wordBreak: "break-word",
-                                    fontFamily: msg.type === 'bot' ? "'Inter', sans-serif" : "var(--font-mono)",
+                                    fontFamily: "var(--font-mono)",
                                     transition: "all 0.3s ease"
                                 }}>
                                     {msg.content}
@@ -311,7 +311,7 @@ const ProjectDiscovery = () => {
                                 color: "var(--text-title)",
                                 outline: "none",
                                 fontSize: "0.85rem",
-                                fontFamily: "'Inter', sans-serif",
+                                fontFamily: "var(--font-mono)",
                                 transition: "all 0.25s ease"
                             }}
                             onFocus={e => e.target.style.borderColor = "var(--chat-user-text)"}

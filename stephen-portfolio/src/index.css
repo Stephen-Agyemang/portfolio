@@ -1,5 +1,5 @@
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-mono);
   line-height: 1.5;
   font-weight: 400;
 
@@ -10,9 +10,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Shared typography tokens */
-  --font-sans: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, 'Courier New', monospace;
+  /* Single shared typeface: the hero's Courier stack, used site-wide */
+  --font-mono: 'Courier New', Courier, 'DM Mono', ui-monospace, monospace;
+  --font-sans: var(--font-mono);
 }
 
 a {
@@ -259,7 +259,7 @@ body::before {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: 'DM Mono', var(--font-mono);
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--telemetry-color);
   letter-spacing: 2px;

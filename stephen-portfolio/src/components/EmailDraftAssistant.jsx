@@ -68,7 +68,7 @@ const EmailDraftAssistant = () => {
             <p style={{
                 marginBottom: "40px",
                 color: "var(--text-color)",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-mono)",
                 maxWidth: "600px",
                 marginLeft: "auto",
                 marginRight: "auto",
@@ -203,7 +203,7 @@ const EmailDraftAssistant = () => {
                     color: var(--email-glass-btn-text);
                     min-height: 120px;
                     font-size: 0.95rem;
-                    font-family: 'Inter', sans-serif;
+                    font-family: var(--font-mono);
                     resize: vertical;
                     box-sizing: border-box;
                     outline: none;
@@ -223,7 +223,7 @@ const EmailDraftAssistant = () => {
                     background: var(--email-glass-input-bg);
                     color: var(--email-glass-btn-text);
                     font-size: 0.95rem;
-                    font-family: 'Inter', sans-serif;
+                    font-family: var(--font-mono);
                     box-sizing: border-box;
                     outline: none;
                     transition: all 0.25s ease;

@@ -210,7 +210,7 @@ const MonicaAiDemo = () => {
           >
             <FaMicrophone /> {isRecording ? 'MUTE AND RUN DIALOG ENGINE' : 'ACTIVATE VOICE COCH STREAM'}
           </button>
-          <p style={{ margin: 0, fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', textAlign: 'center', fontFamily: 'monospace' }}>
+          <p style={{ margin: 0, fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
             PIPELINE SIGNAL: <strong style={{ color: '#c9ec9e' }}>{status}</strong>
           </p>
         </div>
@@ -1032,7 +1032,7 @@ const PortfolioDemo = () => {
             />
           ))}
         </div>
-        <div style={{ marginTop: '20px', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+        <div style={{ marginTop: '20px', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
           THEME: <strong style={{ color: colors[activeAccent] }}>{activeAccent.toUpperCase()} ACTIVE</strong>
         </div>
       </div>

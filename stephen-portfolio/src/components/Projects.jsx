@@ -90,7 +90,7 @@ const Projects = () => {
                                     margin: 0,
                                     color: "var(--text-title)",
                                     fontWeight: "800",
-                                    fontFamily: "'Inter', sans-serif"
+                                    fontFamily: "var(--font-mono)"
                                 }}>
                                     {project.name}
                                 </h3>
@@ -148,7 +148,7 @@ const Projects = () => {
                                 marginBottom: "72px", // Space for action buttons
                                 color: "var(--text-color)",
                                 lineHeight: "1.5",
-                                fontFamily: "'Inter', sans-serif"
+                                fontFamily: "var(--font-mono)"
                             }}>
                                 {project.description}
                             </p>

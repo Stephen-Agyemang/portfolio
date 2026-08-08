@@ -260,7 +260,7 @@ const Skills = () => {
       <h2 className="skills-title section-title-neon" style={{ fontSize: isMobile ? "2rem" : "3rem", marginBottom: isMobile ? "20px" : "10px" }}>
         Skills
       </h2>
-      <p style={{ margin: 0, fontSize: isMobile ? "0.9rem" : "1.05rem", color: "var(--text-color)", maxWidth: "600px", fontFamily: "'Inter', sans-serif" }}>
+      <p style={{ margin: 0, fontSize: isMobile ? "0.9rem" : "1.05rem", color: "var(--text-color)", maxWidth: "600px", fontFamily: "var(--font-mono)" }}>
         Stephen's interactive skill network showing exactly how technical tools were applied across each core project.
       </p>
 

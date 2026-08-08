@@ -134,7 +134,7 @@ const About = () => {
           fontSize: isMobile ? "1rem" : "1.2rem",
           lineHeight: "1.6",
           color: "var(--text-color)",
-          fontFamily: "'Inter', system-ui, sans-serif"
+          fontFamily: "var(--font-mono)"
         }}>
           Hi, I'm Stephen! I'm a Computer Science and Honor Scholar at DePauw University,
           entering my second sophomore semester this fall. I just love asking "why." For me,
@@ -146,7 +146,7 @@ const About = () => {
           fontSize: isMobile ? "1rem" : "1.2rem",
           lineHeight: "1.6",
           color: "var(--text-color)",
-          fontFamily: "'Inter', system-ui, sans-serif"
+          fontFamily: "var(--font-mono)"
         }}>
           When I'm not in class, I'm deep in campus life. I serve as Tech and Design Lead for
           DePauw's Google Developer Group (GDG) and I'm an Aspire Leaders Program alumnus, a
@@ -158,7 +158,7 @@ const About = () => {
           fontSize: isMobile ? "1rem" : "1.2rem",
           lineHeight: "1.6",
           color: "var(--text-color)",
-          fontFamily: "'Inter', system-ui, sans-serif"
+          fontFamily: "var(--font-mono)"
         }}>
           I'm still early in my engineering journey, but I have a massive drive to learn and
           tackle hard problems. Always down to connect with fellow students, builders, and engineers!
