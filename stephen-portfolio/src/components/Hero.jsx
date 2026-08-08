@@ -146,7 +146,7 @@ const Hero = () => {
 
                 {/* LinkedIn */}
                 <a
-                    href="https://www.linkedin.com/in/stephen-agyemang/"
+                    href="https://www.linkedin.com/in/stephagyemang/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hero-social-link"
