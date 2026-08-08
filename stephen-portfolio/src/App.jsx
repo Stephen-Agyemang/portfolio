@@ -48,10 +48,10 @@ function App() {
       if (home && about && projects && skills) {
         if (contact && scrollPos >= contact.offsetTop) {
           current = "contact";
-        } else if (scrollPos >= skills.offsetTop) {
-          current = "skills";
         } else if (scrollPos >= projects.offsetTop) {
           current = "projects";
+        } else if (scrollPos >= skills.offsetTop) {
+          current = "skills";
         } else if (scrollPos >= about.offsetTop) {
           current = "about";
         } else {
@@ -94,8 +94,8 @@ function App() {
         <Hero />
         <Suspense fallback={null}>
           <About />
-          <Projects />
           <Skills />
+          <Projects />
           <EmailDraftAssistant />
           <Footer />
         </Suspense>

@@ -136,10 +136,10 @@ const About = () => {
           color: "var(--text-color)",
           fontFamily: "'Inter', system-ui, sans-serif"
         }}>
-          I am a Ghanaian Honor Scholar at DePauw University studying Computer Science,
-          with a strong interest in software engineering and AI/ML/DL research.
-          I am a DL/ML researcher and incoming ITAP intern — drawn to building systems
-          that are scalable, efficient, and built to last.
+          Hi, I'm Stephen! I'm a Computer Science and Honor Scholar at DePauw University,
+          entering my second sophomore semester this fall. I just love asking "why." For me,
+          software engineering is all about diving into the backend and figuring out how everything
+          connects. Spending hours connecting dots is genuinely my thing.
         </p>
 
         <p style={{
@@ -148,9 +148,10 @@ const About = () => {
           color: "var(--text-color)",
           fontFamily: "'Inter', system-ui, sans-serif"
         }}>
-          I build full-stack projects and I am comfortable across the stack, but I have a
-          growing passion for how things work under the hood — system design, cloud infrastructure,
-          and the engineering that powers great software at scale. Always learning, always building.
+          When I'm not in class, I'm deep in campus life. I serve as Tech and Design Lead for
+          DePauw's Google Developer Group (GDG) and I'm an Aspire Leaders Program alumnus, a
+          program that sharpened my leadership instincts and initiative, which I carry into
+          every role I take on here.
         </p>
 
         <p style={{
@@ -159,9 +160,8 @@ const About = () => {
           color: "var(--text-color)",
           fontFamily: "'Inter', system-ui, sans-serif"
         }}>
-          Beyond the terminal, I am a multi-disciplinary thinker — minoring in Mathematics and Theatre,
-          picking up piano and guitar, shooting photography, and playing soccer. I thrive in
-          fast-paced environments that demand both precision and creativity.
+          I'm still early in my engineering journey, but I have a massive drive to learn and
+          tackle hard problems. Always down to connect with fellow students, builders, and engineers!
         </p>
       </div>
       </div>

@@ -21,11 +21,11 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
       let newSection = "home";
 
       if (home && about && projects && skills) {
-        // Check from bottom to top
-        if (scrollPos >= skills.offsetTop) {
-          newSection = "skills";
-        } else if (scrollPos >= projects.offsetTop) {
+        // Check from bottom to top — Skills is now above Projects in the DOM
+        if (scrollPos >= projects.offsetTop) {
           newSection = "projects";
+        } else if (scrollPos >= skills.offsetTop) {
+          newSection = "skills";
         } else if (scrollPos >= about.offsetTop) {
           newSection = "about";
         } else {
@@ -122,18 +122,6 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
         About
       </a>
       <a
-        href="#projects"
-        className="interactive-scale-sm"
-        style={{
-          ...linkStyle,
-          borderBottom: section === "projects" ? `2px solid ${activeColor}` : "2px solid transparent",
-        }}
-        onMouseOver={(e) => handleHover(e, true)}
-        onMouseOut={(e) => handleHover(e, false)}
-      >
-        Projects
-      </a>
-      <a
         href="#skills"
         className="interactive-scale-sm"
         style={{
@@ -144,6 +132,18 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
         onMouseOut={(e) => handleHover(e, false)}
       >
         Skills
+      </a>
+      <a
+        href="#projects"
+        className="interactive-scale-sm"
+        style={{
+          ...linkStyle,
+          borderBottom: section === "projects" ? `2px solid ${activeColor}` : "2px solid transparent",
+        }}
+        onMouseOver={(e) => handleHover(e, true)}
+        onMouseOut={(e) => handleHover(e, false)}
+      >
+        Projects
       </a>
 
       {/* Futuristic sliding Day/Night Switch */}

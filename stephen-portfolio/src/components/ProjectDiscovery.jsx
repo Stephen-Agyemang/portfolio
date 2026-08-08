@@ -9,7 +9,6 @@ const ProjectDiscovery = () => {
     const isMobile = useIsMobile();
     const [isOpen, setIsOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const [query, setQuery] = useState('');
     const [messages, setMessages] = useState([
         { type: 'bot', content: "Hey! Ask me about my projects, skills, or experience or let's just talk!" }
@@ -20,11 +19,9 @@ const ProjectDiscovery = () => {
     const RATE_LIMIT_MS = 2000;
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 100);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        const openChat = () => setIsOpen(true);
+        window.addEventListener('open-ai-assistant', openChat);
+        return () => window.removeEventListener('open-ai-assistant', openChat);
     }, []);
 
     // Chat history resets on page reload (no localStorage persistence)
@@ -107,8 +104,9 @@ const ProjectDiscovery = () => {
         <>
             {/* Floating Toggle Button — hidden on mobile when chat is open */}
             <button
+                id="ai-assistant-btn"
                 onClick={() => setIsOpen(!isOpen)}
-                className="btn-ai-assistant"
+                className={`btn-ai-assistant${isOpen ? " is-open" : ""}`}
                 style={{
                     position: "fixed",
                     bottom: "30px",
@@ -118,12 +116,12 @@ const ProjectDiscovery = () => {
                     height: "60px",
                     padding: isOpen ? "0" : "0 25px",
                     borderRadius: "30px",
-                    background: scrolled || isOpen ? "var(--color-monica)" : "var(--btn-secondary-bg)",
+                    background: "var(--color-monica)",
                     backdropFilter: "blur(8px)",
                     WebkitBackdropFilter: "blur(8px)",
-                    boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                    color: scrolled || isOpen ? "var(--bg-color)" : "var(--text-color)",
-                    border: scrolled || isOpen ? "1px solid var(--color-monica)" : "1px solid var(--btn-secondary-border)",
+                    boxShadow: "0 0 20px rgba(167,210,115,0.22), 0 8px 30px rgba(0,0,0,0.12)",
+                    color: "var(--bg-color)",
+                    border: "1px solid var(--color-monica)",
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
@@ -357,6 +355,26 @@ const ProjectDiscovery = () => {
             <style>{`
                 .btn-ai-assistant {
                     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                }
+                .btn-ai-assistant:not(.is-open) {
+                    animation: ai-pulse-ring 2.2s ease-out infinite, ai-shake 5s ease-in-out infinite;
+                }
+                @keyframes ai-pulse-ring {
+                    0%   { box-shadow: 0 0 20px rgba(167,210,115,0.22), 0 8px 30px rgba(0,0,0,0.12), 0 0 0 0 rgba(167,210,115,0.55); }
+                    65%  { box-shadow: 0 0 20px rgba(167,210,115,0.22), 0 8px 30px rgba(0,0,0,0.12), 0 0 0 20px rgba(167,210,115,0); }
+                    100% { box-shadow: 0 0 20px rgba(167,210,115,0.22), 0 8px 30px rgba(0,0,0,0.12), 0 0 0 0 rgba(167,210,115,0); }
+                }
+                @keyframes ai-shake {
+                    0%, 78%, 100% { transform: translateX(0) rotate(0deg); }
+                    80%  { transform: translateX(-4px) rotate(-1.5deg); }
+                    82%  { transform: translateX(4px) rotate(1.5deg); }
+                    84%  { transform: translateX(-3px) rotate(-1deg); }
+                    86%  { transform: translateX(3px) rotate(1deg); }
+                    88%  { transform: translateX(-1px) rotate(0deg); }
+                    90%  { transform: translateX(0); }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    .btn-ai-assistant:not(.is-open) { animation: none; }
                 }
                 .btn-ai-assistant:hover {
                     transform: scale(1.08) translateY(-2px) !important;

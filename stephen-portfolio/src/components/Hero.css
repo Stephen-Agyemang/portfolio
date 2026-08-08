@@ -97,14 +97,31 @@
    HERO SOCIAL ICONS PURE CSS INTERACTIVE HOVER SCALING
    ============================================================ */
 .hero-social-link {
-  display: inline-block !important;
+  display: inline-flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   text-decoration: none;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   outline: none;
 }
 
 .hero-social-link:hover {
-  transform: scale(1.20) translateY(-2px) !important;
+  transform: scale(1.15) translateY(-3px) !important;
+}
+
+.hero-social-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--hero-text-grey);
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.hero-social-link:hover .hero-social-label {
+  color: var(--text-title);
 }
 
 .hero-icon-linkedin {

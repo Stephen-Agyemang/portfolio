@@ -156,6 +156,7 @@ const Hero = () => {
                         className="hero-icon-linkedin"
                         style={{ fontSize: isMobile ? "2.5rem" : "4rem" }}
                     />
+                    <span className="hero-social-label">LinkedIn</span>
                 </a>
 
                 {/* GitHub */}
@@ -170,6 +171,7 @@ const Hero = () => {
                         className="hero-icon-github"
                         style={{ fontSize: isMobile ? "2.5rem" : "4rem" }}
                     />
+                    <span className="hero-social-label">GitHub</span>
                 </a>
 
                 {/* Resume */}
@@ -184,9 +186,11 @@ const Hero = () => {
                         className="hero-icon-resume"
                         style={{ fontSize: isMobile ? "2.5rem" : "4rem" }}
                     />
+                    <span className="hero-social-label">Resume</span>
                 </a>
             </div>
         </div>
+
         </section>
     );
 };
