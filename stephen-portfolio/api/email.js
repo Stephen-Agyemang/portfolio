@@ -61,10 +61,22 @@ export default async function handler(req, res) {
                     content: userIntent
                 }
             ],
+            max_completion_tokens: 1200,
             response_format: { type: "json_object" },
         });
 
-        res.status(200).json(JSON.parse(completion.choices[0].message.content));
+        const choice = completion.choices[0];
+
+        // Hitting the token cap truncates the JSON mid-object, so JSON.parse would
+        // fail with a syntax error that hides the real cause. Name it instead.
+        if (choice.finish_reason === "length") {
+            console.error("Email draft hit max_completion_tokens and was truncated");
+            return res.status(500).json({
+                error: "The draft came back incomplete. Try a shorter prompt."
+            });
+        }
+
+        res.status(200).json(JSON.parse(choice.message.content));
     } catch (error) {
         console.error(error);
         res.status(500).json({
