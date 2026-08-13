@@ -139,7 +139,7 @@ export function getHandshakeProfile() {
         },
 
         portfolioLinks: {
-            portfolio: "https://stephen-vite.vercel.app",
+            portfolio: "https://stephenagyemang.com",
             github: "https://github.com/Stephen-Agyemang",
             linkedin: "https://www.linkedin.com/in/stephagyemang",
         },

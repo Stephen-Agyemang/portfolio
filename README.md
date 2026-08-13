@@ -2,7 +2,7 @@
 
 Personal portfolio site built with **React 19** and **Vite 7** — a terminal/HUD-inspired interface with an AI chatbot that answers questions about my work using live GitHub data.
 
-**Live:** [stephagyemang-portfolio.web.app](https://stephagyemang-portfolio.web.app)
+**Live:** [stephenagyemang.com](https://stephenagyemang.com)
 
 ## Features
 

@@ -4,6 +4,8 @@ import { db } from "./firestore.js";
 const env = globalThis.process?.env ?? {};
 
 const DEFAULT_ORIGINS = [
+    "https://stephenagyemang.com",
+    "https://www.stephenagyemang.com",
     "https://stephagyemang-portfolio.web.app",
     "https://stephagyemang-portfolio.firebaseapp.com",
     "https://stephen-vite.vercel.app",
