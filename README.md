@@ -1,6 +1,6 @@
 # Stephen Agyemang — Portfolio
 
-Personal portfolio site built with **React 19** and **Vite 7** — a terminal/HUD-inspired interface with an AI chatbot that answers questions about my work using live GitHub data.
+Personal portfolio site built with **React** and **Vite 7** — a terminal/HUD-inspired interface with an AI chatbot that answers questions about my work using live GitHub data.
 
 **Live:** [stephenagyemang.com](https://stephenagyemang.com)
 
