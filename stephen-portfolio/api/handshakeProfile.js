@@ -49,13 +49,13 @@ export function getHandshakeProfile() {
                 name: "African Students Association (ASA)",
                 role: "First-Year Student Leader",
                 location: "Greencastle, IN",
-                dates: "September 2025 – Present",
+                dates: "September 2025 – May 2026",
             },
             {
                 name: "DePauw International Student Association",
                 role: "Student Leader",
                 location: "Greencastle, IN",
-                dates: "September 2025 – Present",
+                dates: "September 2025 – May 2026",
             },
             {
                 name: "ColorStack",
