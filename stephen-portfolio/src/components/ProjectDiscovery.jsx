@@ -14,6 +14,9 @@ const ProjectDiscovery = () => {
         { type: 'bot', content: "Hey! Ask me about my projects, skills, or experience or let's just talk!" }
     ]);
     const [loading, setLoading] = useState(false);
+    // The API is serverless, so an idle-cold first request is slow but fine.
+    // Saying so beats a silent bubble that reads as the assistant being broken.
+    const [warming, setWarming] = useState(false);
     const messagesEndRef = useRef(null);
     const lastRequestTimeRef = useRef(0);
     const RATE_LIMIT_MS = 2000;
@@ -61,6 +64,7 @@ const ProjectDiscovery = () => {
         setMessages(prev => [...prev, { type: 'bot', content: '' }]);
 
         let accumulatedContent = '';
+        const warmupTimer = setTimeout(() => setWarming(true), 4000);
         try {
             await chatWithAIStream(userMsg, projects, (chunk) => {
                 accumulatedContent += chunk;
@@ -86,6 +90,13 @@ const ProjectDiscovery = () => {
                     };
                     return updated;
                 });
+            }, {
+                onStatus: (phase) => {
+                    if (phase === 'streaming' || phase === 'done') {
+                        clearTimeout(warmupTimer);
+                        setWarming(false);
+                    }
+                }
             });
         } catch (err) {
             console.error("AI Chat Error:", err);
@@ -96,6 +107,8 @@ const ProjectDiscovery = () => {
                 content: err?.message || "Sorry, I had trouble connecting to my brain."
             }]);
         } finally {
+            clearTimeout(warmupTimer);
+            setWarming(false);
             setLoading(false);
         }
     };
@@ -282,7 +295,7 @@ const ProjectDiscovery = () => {
                         ))}
                         {loading && (
                             <div style={{ alignSelf: "flex-start", color: "var(--chat-user-text)", fontSize: "0.78rem", marginLeft: "10px", fontFamily: "var(--font-mono)" }} className="blink-led">
-                                SEC_AI // Thinking...
+                                {warming ? 'SEC_AI // Waking up, first request is slow...' : 'SEC_AI // Thinking...'}
                             </div>
                         )}
                         <div ref={messagesEndRef} />
