@@ -48,7 +48,7 @@ const EmailDraftAssistant = () => {
 
     return (
         <section id="contact-assistant" style={{
-            padding: isMobile ? "80px 16px" : "100px 20px",
+            padding: isMobile ? "44px 16px" : "60px 20px",
             background: "transparent",
             borderTop: "1px solid var(--footer-border)",
             textAlign: "center",
