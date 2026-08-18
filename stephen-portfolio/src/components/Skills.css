@@ -9,7 +9,9 @@
 }
 
 .skills-title {
-  color: #ffffff;
+  /* No colour here: .section-title-neon supplies var(--text-title), which is
+     white in dark mode and near-black in light. Hardcoding white made this
+     heading invisible against the light theme's background. */
   margin: 0;
   text-align: left;
   font-family: var(--font-mono);
