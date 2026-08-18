@@ -7,6 +7,8 @@ const About = lazy(() => import("./components/About.jsx"));
 const Projects = lazy(() => import("./components/Projects.jsx"));
 const ProjectDiscovery = lazy(() => import("./components/ProjectDiscovery.jsx"));
 const Skills = lazy(() => import("./components/Skills.jsx"));
+const Experience = lazy(() => import("./components/Experience.jsx"));
+const Credentials = lazy(() => import("./components/Credentials.jsx"));
 const EmailDraftAssistant = lazy(() => import("./components/EmailDraftAssistant.jsx"));
 const Footer = lazy(() => import("./components/Footer.jsx"));
 
@@ -96,6 +98,8 @@ function App() {
           <About />
           <Skills />
           <Projects />
+          <Experience />
+          <Credentials />
           <EmailDraftAssistant />
           <Footer />
         </Suspense>
