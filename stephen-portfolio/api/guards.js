@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { db } from "./firestore.js";
+import { pipeline, pipelineDetached, redisAvailable } from "./upstash.js";
 
 const env = globalThis.process?.env ?? {};
 
@@ -36,9 +36,9 @@ const LIMITS = {
  */
 const GLOBAL_DAILY_MAX = Number(env.AI_DAILY_REQUEST_CAP) || 1000;
 
-/** In-memory fallback, and a fast path that avoids a Firestore round trip
- *  for callers already known to be over quota on this instance. Resets on
- *  cold start and is per-instance, which is why Firestore backs it. */
+/** In-memory fallback, and a fast path that avoids a network round trip for
+ *  callers already known to be over quota on this instance. Resets on cold
+ *  start and is per-instance, which is why Redis backs it. */
 const memoryBuckets = new Map();
 
 function utcDay() {
@@ -51,7 +51,7 @@ function secondsUntilUtcMidnight() {
     return Math.max(1, Math.ceil((midnight - now.getTime()) / 1000));
 }
 
-/** Hashed so raw visitor IPs are never written to Firestore. */
+/** Hashed so raw visitor IPs are never persisted. */
 function clientFingerprint(req) {
     const forwarded = req.headers?.["x-forwarded-for"];
     const ip = (Array.isArray(forwarded) ? forwarded[0] : forwarded || "")
@@ -112,55 +112,71 @@ function consumeMemory(key, limits) {
     return { allowed: true };
 }
 
-async function consumeFirestore(bucket, fingerprint, limits) {
+/**
+ * Fixed-window counters in Redis.
+ *
+ * The old Firestore version read-then-wrote inside a transaction. `INCR` is
+ * already atomic, so the counter is bumped first and judged afterwards — which
+ * means the returned value is the count *including* this request, and the
+ * comparisons below use `>` where the transaction used `>=`.
+ *
+ * Keys carry the window or day in their name and expire on their own, so
+ * nothing has to be swept by hand the way the old `rateLimits` collection did.
+ */
+async function consumeRedis(bucket, fingerprint, limits) {
+    const now = Date.now();
     const day = utcDay();
-    const ref = db.collection("rateLimits").doc(`${bucket}_${fingerprint}_${day}`);
-    const globalRef = db.collection("rateLimits").doc(`global_${day}`);
-    // Lets a Firestore TTL policy on `expiresAt` sweep these documents.
-    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    const windowIndex = Math.floor(now / limits.burst.windowMs);
+    const dayTtl = secondsUntilUtcMidnight();
+    const windowTtl = Math.ceil(limits.burst.windowMs / 1000) + 1;
 
-    return db.runTransaction(async (tx) => {
-        const [snap, globalSnap] = await Promise.all([tx.get(ref), tx.get(globalRef)]);
+    const burstKey = `rl:${bucket}:${fingerprint}:w:${windowIndex}`;
+    const dailyKey = `rl:${bucket}:${fingerprint}:d:${day}`;
+    const globalKey = `rl:global:${day}`;
 
-        const now = Date.now();
-        const data = snap.exists ? snap.data() : {};
-        const dayCount = data.dayCount || 0;
-        const windowStart = data.windowStart || 0;
-        const windowCount = data.windowCount || 0;
-        const globalCount = globalSnap.exists ? globalSnap.data().count || 0 : 0;
+    const [burstCount, , dailyCount, , globalCount] = await pipeline([
+        ["INCR", burstKey],
+        ["EXPIRE", burstKey, String(windowTtl)],
+        ["INCR", dailyKey],
+        ["EXPIRE", dailyKey, String(dayTtl)],
+        ["INCR", globalKey],
+        ["EXPIRE", globalKey, String(dayTtl)],
+    ]);
 
-        if (globalCount >= GLOBAL_DAILY_MAX) {
-            return { allowed: false, reason: "global", retryAfter: secondsUntilUtcMidnight() };
-        }
+    /**
+     * Counting happens before judging, so a caller rejected on a per-IP rule
+     * has already consumed global quota. Handing it back matters: otherwise a
+     * burst attacker could drain the daily spend cap without a single request
+     * ever reaching OpenAI.
+     */
+    const refundGlobal = () => pipelineDetached([["DECR", globalKey]]);
 
-        if (dayCount >= limits.dailyMax) {
-            return { allowed: false, reason: "daily", retryAfter: secondsUntilUtcMidnight() };
-        }
+    if (globalCount !== null && globalCount > GLOBAL_DAILY_MAX) {
+        return { allowed: false, reason: "global", retryAfter: dayTtl };
+    }
 
-        const inWindow = now - windowStart < limits.burst.windowMs;
+    if (dailyCount !== null && dailyCount > limits.dailyMax) {
+        refundGlobal();
+        return { allowed: false, reason: "daily", retryAfter: dayTtl };
+    }
 
-        if (inWindow && windowCount >= limits.burst.max) {
-            const retryAfter = Math.ceil((windowStart + limits.burst.windowMs - now) / 1000);
-            return { allowed: false, reason: "burst", retryAfter: Math.max(1, retryAfter) };
-        }
+    if (burstCount !== null && burstCount > limits.burst.max) {
+        refundGlobal();
+        const windowEndsAt = (windowIndex + 1) * limits.burst.windowMs;
+        return {
+            allowed: false,
+            reason: "burst",
+            retryAfter: Math.max(1, Math.ceil((windowEndsAt - now) / 1000)),
+        };
+    }
 
-        tx.set(ref, {
-            dayCount: dayCount + 1,
-            windowStart: inWindow ? windowStart : now,
-            windowCount: inWindow ? windowCount + 1 : 1,
-            expiresAt,
-        }, { merge: true });
-
-        tx.set(globalRef, { count: globalCount + 1, expiresAt }, { merge: true });
-
-        return { allowed: true };
-    });
+    return { allowed: true };
 }
 
 /**
  * Applies the per-IP and global quotas for an endpoint.
  *
- * Fails open on Firestore errors: a persistence outage should degrade to the
+ * Fails open on Redis errors: a persistence outage should degrade to the
  * in-memory limiter rather than take the site's chatbot down. The in-memory
  * check runs first so a caller already over quota on this instance costs
  * nothing to reject.
@@ -173,10 +189,10 @@ export async function enforceRateLimit(req, bucket) {
     const memoryResult = consumeMemory(`${bucket}_${fingerprint}`, limits);
     if (!memoryResult.allowed) return memoryResult;
 
-    if (!db) return memoryResult;
+    if (!redisAvailable) return memoryResult;
 
     try {
-        return await consumeFirestore(bucket, fingerprint, limits);
+        return await consumeRedis(bucket, fingerprint, limits);
     } catch (error) {
         console.error("Rate limit check failed, falling back to in-memory:", error);
         return { allowed: true };
