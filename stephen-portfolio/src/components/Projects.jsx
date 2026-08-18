@@ -21,7 +21,7 @@ const Projects = () => {
         <section
             id="projects"
             style={{
-                padding: isMobile ? "80px 16px" : "100px 20px",
+                padding: isMobile ? "44px 16px" : "60px 20px",
                 textAlign: "left",
                 zIndex: 2,
                 position: "relative"
@@ -230,8 +230,10 @@ const Projects = () => {
                                             minHeight: "48px",
                                             borderRadius: "12px",
                                             border: "1px dashed var(--btn-secondary-border)",
-                                            background: "rgba(255, 255, 255, 0.01)",
-                                            color: "rgba(255, 255, 255, 0.25)",
+                                            // Theme tokens, not hardcoded white — this button
+                                            // was invisible against the light theme's background.
+                                            background: "var(--btn-secondary-bg)",
+                                            color: "var(--btn-secondary-text)",
                                             fontWeight: "600",
                                             cursor: "not-allowed",
                                             display: "flex",
@@ -247,7 +249,35 @@ const Projects = () => {
                                     </button>
                                 )}
 
-                                {/* 3. View Source Code Link */}
+                                {/* 3. View Source Code Link — rendered as a disabled
+                                     control when `codeDisabled` is set in projects.js,
+                                     so an unreachable repo never ships as a live link. */}
+                                {project.codeDisabled ? (
+                                    <button
+                                        disabled
+                                        title="Source code isn't publicly available right now"
+                                        style={{
+                                            flex: 1,
+                                            padding: "10px 4px",
+                                            minHeight: "48px",
+                                            borderRadius: "12px",
+                                            border: "1px dashed var(--btn-secondary-border)",
+                                            background: "var(--btn-secondary-bg)",
+                                            color: "var(--btn-secondary-text)",
+                                            fontWeight: "600",
+                                            cursor: "not-allowed",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "4px",
+                                            fontSize: "0.78rem",
+                                            opacity: 0.45,
+                                            outline: 'none'
+                                        }}
+                                    >
+                                        Private
+                                    </button>
+                                ) : (
                                 <a
                                     href={project.link}
                                     target="_blank"
@@ -291,6 +321,7 @@ const Projects = () => {
                                         Code
                                     </button>
                                 </a>
+                                )}
                             </div>
                         </div>
                     );
