@@ -10,11 +10,9 @@ import {
 
 const ProjectDemoModal = ({ project, onClose }) => {
   const dialogRef = useRef(null);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (project) {
-      setIsOpen(true);
       if (dialogRef.current) {
         dialogRef.current.showModal();
       }
@@ -22,7 +20,6 @@ const ProjectDemoModal = ({ project, onClose }) => {
   }, [project]);
 
   const handleClose = () => {
-    setIsOpen(false);
     if (dialogRef.current) {
       dialogRef.current.close();
     }
@@ -837,134 +834,136 @@ const FridgeJamDemo = () => {
 };
 
 // ============================================================
-// 4. FinTracker - Dual Dashboard & Advisor Simulation
+// 4. FinTracker - Personal Finance Dashboard Simulation
 // ============================================================
 const FinTrackerDemo = () => {
-  const [consoleLogs, setConsoleLogs] = useState([
-    "FinTracker personal wealth client v1.0 [FastAPI active]",
-    "Type \"help\" to display transaction logs CLI commands."
-  ]);
-  const [inputVal, setInputVal] = useState('');
-  const [expenses, setExpenses] = useState([
-    { name: 'Groceries', value: 80 },
-    { name: 'Subscriptions', value: 35 },
-    { name: 'Dining Out', value: 45 }
-  ]);
-  const [alerts, setAlerts] = useState([
-    "⚠️ Warning: Duplicate monthly bills flagged: Netflix Inc. ($15.99) charged twice.",
-    "💡 Tip: Safest daily spend target adjusted to $42.50 to clear subscription cycles."
+  const [view, setView] = useState('overview');
+  const [synced, setSynced] = useState(false);
+  const [style, setStyle] = useState('Balanced');
+  const [message, setMessage] = useState('');
+  const [chat, setChat] = useState([
+    { role: 'AI', text: 'You are within budget this month. Dining is the clearest opportunity: it is 18% above your usual pace.' }
   ]);
 
-  const handleCommand = (e) => {
-    e.preventDefault();
-    if (!inputVal.trim()) return;
+  const categories = [
+    { name: 'Housing', value: 1380, percent: 82 },
+    { name: 'Dining', value: 426, percent: 51 },
+    { name: 'Groceries', value: 312, percent: 38 },
+    { name: 'Transport', value: 184, percent: 22 },
+  ];
 
-    const cmd = inputVal.trim();
-    setInputVal('');
-    const tokens = cmd.split(' ');
-    const action = tokens[0].toLowerCase();
+  const subscriptions = [
+    { name: 'Spotify', cadence: 'Monthly', monthly: 11.99, next: 'Aug 24' },
+    { name: 'Adobe', cadence: 'Monthly', monthly: 22.99, next: 'Aug 28' },
+    { name: 'Cloud Storage', cadence: 'Annual', monthly: 8.33, next: 'Sep 03' },
+  ];
 
-    let output = `Command not recognized. Type 'help'.`;
-
-    if (action === 'help') {
-      output = "FASTAPI ENDPOINT ARGUMENTS: add <amount> <category> | show | limit <value> | reset";
-    } else if (action === 'show') {
-      output = "LEDGER: " + expenses.map(e => `${e.name}: $${e.value}`).join(' // ');
-    } else if (action === 'add') {
-      const val = parseFloat(tokens[1]);
-      const cat = tokens.slice(2).join(' ') || 'General';
-
-      if (isNaN(val)) {
-        output = "Usage error: add [amount] [category]";
-      } else {
-        setExpenses(prev => {
-          const match = prev.find(e => e.name.toLowerCase() === cat.toLowerCase());
-          if (match) {
-            return prev.map(e => e.name.toLowerCase() === cat.toLowerCase() ? { ...e, value: e.value + val } : e);
-          } else {
-            return [...prev, { name: cat, value: val }];
-          }
-        });
-        output = `FastAPI Pydantic verified. Added $${val} to '${cat}'.`;
-
-        if (cat.toLowerCase().includes('sub') || cat.toLowerCase().includes('trial')) {
-          setAlerts(prev => [
-            ...prev,
-            `💡 Alert: AI flagged subscription trial: '${cat}' renews on June 1. Cancel before billing.`
-          ]);
-        }
-      }
-    } else if (action === 'limit') {
-      const limit = parseFloat(tokens[1]);
-      if (isNaN(limit)) {
-        output = "Usage error: limit [value]";
-      } else {
-        output = `DAILY SAFE-TO-SPEND LIMIT configured to $${limit}/day.`;
-      }
-    } else if (action === 'reset') {
-      setExpenses([{ name: 'General', value: 0 }]);
-      output = "Ledger databases purged.";
-    }
-
-    setConsoleLogs(prev => [
-      ...prev,
-      `$ ${cmd}`,
-      output
+  const submitQuestion = (event) => {
+    event.preventDefault();
+    if (!message.trim()) return;
+    const question = message.trim();
+    setMessage('');
+    setChat((items) => [
+      ...items,
+      { role: 'You', text: question },
+      { role: 'AI', text: `${style} plan: cap dining at $85 per week and redirect the difference toward your emergency-fund goal. Based on this month's transactions, that would free about $164.` }
     ]);
   };
 
   return (
     <div className="fintracker-dark-view">
-      {/* Left: Terminal quick logger */}
-      <div className="fintracker-cli-container">
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', fontSize: '0.8rem', color: '#ffb300', fontWeight: 'bold' }}>
-          <FaTerminal /> Python CLI Wealth Logger
+      <aside className="fintracker-sidebar">
+        <div className="fintracker-brand"><FaChartLine /> FINTRACKER</div>
+        {[
+          ['overview', 'Overview'],
+          ['subscriptions', 'Subscriptions'],
+          ['advisor', 'AI Advisor'],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            className={view === id ? 'active' : ''}
+            onClick={() => setView(id)}
+          >
+            {label}
+          </button>
+        ))}
+        <div className="fintracker-sync-status">
+          <FaDatabase /> SQLite // WAL<br />
+          <span>{synced ? '30 days synced' : 'Demo data loaded'}</span>
         </div>
-        <div style={{ flex: 1, overflowY: 'auto', fontSize: '0.75rem', lineHeight: '1.45', marginBottom: '12px' }}>
-          {consoleLogs.map((log, idx) => (
-            <div key={idx} style={{ color: log.startsWith('$') ? '#38bdf8' : '#fff' }}>{log}</div>
-          ))}
-        </div>
-        <form onSubmit={handleCommand} style={{ display: 'flex', borderTop: '1px solid #111a2e', paddingTop: '10px' }}>
-          <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>$</span>
-          <input 
-            type="text" 
-            value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
-            placeholder="add 30 food..." 
-            className="fintracker-cli-input"
-          />
-        </form>
-      </div>
+      </aside>
 
-      {/* Right: Premium dashboard view */}
       <div className="fintracker-glass-card">
-        <h4 style={{ margin: '0 0 10px', color: '#38bdf8', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Asset Allocations Trajectory</h4>
-        
-        {/* Dynamic bar charts */}
-        <div className="chart-area-mock">
-          {expenses.map((e, idx) => {
-            const height = Math.min(100, Math.max(10, (e.value / 180) * 100));
-            return (
-              <div 
-                key={idx} 
-                className="finance-chart-bar" 
-                style={{ height: `${height}%`, background: 'linear-gradient(180deg, #38bdf8, #0369a1)', width: '30px' }}
-                data-label={e.name}
-              ></div>
-            );
-          })}
-        </div>
+        <header className="fintracker-demo-header">
+          <div>
+            <span className="fintracker-eyebrow">PERSONAL FINANCE // LIVE SNAPSHOT</span>
+            <h4>{view === 'overview' ? 'Cash-flow overview' : view === 'subscriptions' ? 'Recurring charges' : 'Context-aware advisor'}</h4>
+          </div>
+          <button onClick={() => setSynced(true)}>
+            <FaSync className={synced ? 'fintracker-spin' : ''} /> {synced ? 'Synced' : 'Sync Plaid / CSV'}
+          </button>
+        </header>
 
-        {/* Dynamic advisor flags */}
-        <div style={{ marginTop: '20px', flex: 1, overflowY: 'auto' }}>
-          {alerts.map((al, idx) => (
-            <div key={idx} className="ai-alert-banner" style={{ background: 'rgba(255, 179, 0, 0.05)', border: '1px solid rgba(255, 179, 0, 0.25)', color: '#ffd066' }}>
-              <FaExclamationTriangle style={{ flexShrink: 0, marginTop: '2px' }} />
-              <span>{al}</span>
+        {view === 'overview' && (
+          <div className="fintracker-overview">
+            <div className="fintracker-metrics">
+              <div><span>NET CASH FLOW</span><strong>+$1,284</strong><small>+12.4% vs last month</small></div>
+              <div><span>MONTHLY SPEND</span><strong>$2,846</strong><small>68% of budget</small></div>
+              <div><span>SAVINGS GOAL</span><strong>74%</strong><small>$5,920 of $8,000</small></div>
             </div>
-          ))}
-        </div>
+            <div className="fintracker-category-card">
+              <div className="fintracker-card-title">SPEND BY CATEGORY</div>
+              {categories.map((category) => (
+                <div className="fintracker-category-row" key={category.name}>
+                  <span>{category.name}</span>
+                  <div><i style={{ width: `${category.percent}%` }} /></div>
+                  <strong>${category.value.toLocaleString()}</strong>
+                </div>
+              ))}
+            </div>
+            <div className="fintracker-insight">
+              <FaExclamationTriangle /> Dining is trending $64 above your usual pace. Your subscriptions total $519.72 annually.
+            </div>
+          </div>
+        )}
+
+        {view === 'subscriptions' && (
+          <div className="fintracker-subscriptions">
+            <div className="fintracker-subscription-summary">
+              <span>3 detected subscriptions</span><strong>$43.31 / month</strong><small>$519.72 normalized annual cost</small>
+            </div>
+            {subscriptions.map((item) => (
+              <div className="fintracker-subscription-row" key={item.name}>
+                <div><strong>{item.name}</strong><span>{item.cadence} · next {item.next}</span></div>
+                <b>${item.monthly.toFixed(2)}<small>/mo</small></b>
+                <button onClick={() => setView('advisor')}>Cancellation help</button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {view === 'advisor' && (
+          <div className="fintracker-advisor">
+            <div className="fintracker-style-picker">
+              <span>ADVICE STYLE</span>
+              {['Creative', 'Balanced', 'Strict'].map((name) => (
+                <button key={name} className={style === name ? 'active' : ''} onClick={() => setStyle(name)}>{name}</button>
+              ))}
+            </div>
+            <div className="fintracker-chat">
+              {chat.map((item, index) => (
+                <div className={item.role === 'AI' ? 'ai' : 'user'} key={`${item.role}-${index}`}>
+                  <strong>{item.role}</strong>{item.text}
+                </div>
+              ))}
+            </div>
+            <form onSubmit={submitQuestion} className="fintracker-chat-form">
+              <input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Ask about your spending, budget, or subscriptions…" />
+              <button aria-label="Send question"><FaPaperPlane /></button>
+            </form>
+            <small className="fintracker-model-note">Gemini / Claude · grounded in current metrics, categories, and recent transactions</small>
+          </div>
+        )}
       </div>
     </div>
   );

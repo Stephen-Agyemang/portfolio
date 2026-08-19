@@ -583,10 +583,11 @@ dialog::backdrop {
    ============================================================ */
 .fintracker-dark-view {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 20px;
+  grid-template-columns: 190px 1fr;
+  gap: 16px;
   height: 100%;
-  padding: 24px;
+  min-height: 430px;
+  padding: 20px;
   box-sizing: border-box;
   background: #040814;
   color: #cbd5e1;
@@ -597,65 +598,167 @@ dialog::backdrop {
     grid-template-columns: 1fr;
     overflow-y: auto;
   }
+
+  .fintracker-sidebar {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+  }
+
+  .fintracker-brand,
+  .fintracker-sync-status {
+    width: 100%;
+  }
+
+  .fintracker-metrics {
+    grid-template-columns: 1fr !important;
+  }
 }
+
+.fintracker-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px;
+  border: 1px solid #13233a;
+  border-radius: 16px;
+  background: #07101f;
+}
+
+.fintracker-brand {
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.fintracker-sidebar button {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: transparent;
+  color: #8291a7;
+  text-align: left;
+  font: 600 0.7rem var(--font-mono);
+  cursor: pointer;
+}
+
+.fintracker-sidebar button.active {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.fintracker-sync-status {
+  margin-top: auto;
+  color: #64748b;
+  font-size: 0.62rem;
+  line-height: 1.6;
+}
+
+.fintracker-sync-status span { color: #94a3b8; }
 
 .fintracker-glass-card {
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #13233a;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
-/* Modern responsive dark charts */
-.chart-area-mock {
-  height: 140px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255,255,255,0.03);
-  border-radius: 12px;
-  position: relative;
+.fintracker-demo-header,
+.fintracker-metrics,
+.fintracker-category-row,
+.fintracker-subscription-row,
+.fintracker-style-picker,
+.fintracker-chat-form {
   display: flex;
-  align-items: flex-end;
-  padding: 10px;
+  align-items: center;
 }
 
-.chart-line-svg {
-  position: absolute;
-  inset: 10px;
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
-  overflow: visible;
+.fintracker-demo-header { justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.fintracker-eyebrow { color: #64748b; font-size: 0.58rem; letter-spacing: 0.9px; }
+.fintracker-demo-header h4 { margin: 4px 0 0; color: #f8fafc; font-size: 1rem; }
+.fintracker-demo-header button,
+.fintracker-subscription-row button,
+.fintracker-style-picker button,
+.fintracker-chat-form button {
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #7dd3fc;
+  font: 700 0.62rem var(--font-mono);
+  padding: 8px 10px;
+  cursor: pointer;
 }
 
-.chart-line-path {
-  fill: none;
-  stroke: url(#chart-gradient);
-  stroke-width: 3.5;
-  stroke-linecap: round;
+.fintracker-spin { animation: fintracker-spin 0.7s ease; }
+@keyframes fintracker-spin { to { transform: rotate(360deg); } }
+
+.fintracker-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.fintracker-metrics > div,
+.fintracker-category-card,
+.fintracker-subscription-summary {
+  border: 1px solid #13233a;
+  border-radius: 10px;
+  background: #07101f;
+  padding: 12px;
 }
 
-/* CLI log in FinTracker */
-.fintracker-cli-container {
-  background: #010309;
-  border: 1px solid #111a2e;
-  border-radius: 12px;
-  padding: 16px;
-  font-family: var(--font-mono);
-  color: #38bdf8;
-  display: flex;
-  flex-direction: column;
-}
+.fintracker-metrics span,
+.fintracker-metrics small,
+.fintracker-subscription-summary span,
+.fintracker-subscription-summary small { display: block; }
+.fintracker-metrics span { color: #64748b; font-size: 0.55rem; }
+.fintracker-metrics strong { display: block; margin: 6px 0 3px; color: #f8fafc; font-size: 1.05rem; }
+.fintracker-metrics small { color: #22c55e; font-size: 0.55rem; }
+.fintracker-category-card { margin-top: 10px; }
+.fintracker-card-title { color: #64748b; font-size: 0.58rem; margin-bottom: 10px; }
+.fintracker-category-row { gap: 10px; margin: 9px 0; font-size: 0.65rem; }
+.fintracker-category-row > span { width: 74px; color: #cbd5e1; }
+.fintracker-category-row > div { flex: 1; height: 6px; background: #111c2d; border-radius: 4px; overflow: hidden; }
+.fintracker-category-row i { display: block; height: 100%; background: linear-gradient(90deg, #0369a1, #38bdf8); border-radius: 4px; }
+.fintracker-category-row strong { width: 55px; text-align: right; color: #e2e8f0; }
+.fintracker-insight { margin-top: 10px; padding: 10px; border: 1px solid rgba(255,179,0,.25); border-radius: 9px; color: #ffd066; font-size: 0.65rem; line-height: 1.5; }
+.fintracker-insight svg { margin-right: 7px; }
 
-.fintracker-cli-input {
-  background: transparent;
-  border: none;
-  color: #fff;
-  outline: none;
-  font-family: inherit;
-  font-size: 0.8rem;
-  flex: 1;
-  padding-left: 6px;
+.fintracker-subscriptions { display: flex; flex-direction: column; gap: 10px; }
+.fintracker-subscription-summary strong { display: block; color: #7dd3fc; font-size: 1.25rem; margin: 7px 0 3px; }
+.fintracker-subscription-summary span,
+.fintracker-subscription-summary small { color: #94a3b8; font-size: 0.62rem; }
+.fintracker-subscription-row { gap: 12px; padding: 12px; border-bottom: 1px solid #13233a; }
+.fintracker-subscription-row > div { flex: 1; }
+.fintracker-subscription-row strong,
+.fintracker-subscription-row span { display: block; }
+.fintracker-subscription-row strong { color: #f8fafc; font-size: 0.75rem; }
+.fintracker-subscription-row span { color: #64748b; font-size: 0.58rem; margin-top: 4px; }
+.fintracker-subscription-row b { color: #e2e8f0; font-size: 0.76rem; }
+.fintracker-subscription-row b small { color: #64748b; }
+
+.fintracker-advisor { display: flex; flex-direction: column; min-height: 320px; }
+.fintracker-style-picker { gap: 7px; margin-bottom: 12px; }
+.fintracker-style-picker > span { color: #64748b; font-size: 0.56rem; margin-right: 4px; }
+.fintracker-style-picker button { padding: 6px 8px; color: #64748b; border-color: #1e293b; background: transparent; }
+.fintracker-style-picker button.active { color: #7dd3fc; border-color: rgba(56,189,248,.4); background: rgba(56,189,248,.1); }
+.fintracker-chat { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.fintracker-chat > div { max-width: 80%; padding: 9px 11px; border-radius: 9px; font-size: 0.66rem; line-height: 1.5; }
+.fintracker-chat > div strong { display: block; font-size: 0.52rem; color: #7dd3fc; margin-bottom: 3px; }
+.fintracker-chat .ai { background: #071525; border: 1px solid #15324b; }
+.fintracker-chat .user { align-self: flex-end; background: rgba(56,189,248,.14); border: 1px solid rgba(56,189,248,.25); }
+.fintracker-chat-form { gap: 8px; margin-top: 12px; }
+.fintracker-chat-form input { flex: 1; min-width: 0; border: 1px solid #1e293b; border-radius: 8px; background: #040914; color: #f8fafc; padding: 10px; font: 0.65rem var(--font-mono); outline: none; }
+.fintracker-model-note { display: block; margin-top: 7px; color: #475569; font-size: 0.52rem; }
+
+@media (max-width: 560px) {
+  .fintracker-demo-header { align-items: flex-start; }
+  .fintracker-demo-header button { max-width: 110px; }
+  .fintracker-subscription-row { flex-wrap: wrap; }
+  .fintracker-subscription-row > div { min-width: 140px; }
 }

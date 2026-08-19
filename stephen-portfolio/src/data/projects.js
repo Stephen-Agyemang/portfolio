@@ -32,17 +32,6 @@ export const projects = [
         skills: ["Gemini AI", "FastAPI", "Python", "JavaScript", "HTML5", "CSS3", "Firebase", "Docker", "Google Cloud Run"],
         demoType: "chef-assistant"
     },
-    /*
-    {
-        id: "fintracker",
-        name: "FinTracker",
-        tagline: "AI-Driven Personal Wealth & CLI Dashboard",
-        description: "A dual-interface personal wealth management suite combining a lightweight, responsive Python CLI logging client for high-efficiency entries with a premium, glassmorphic dark-theme web dashboard. Powered by a rule-based AI financial advisor to scan burn trajectories, flag redundant bills, and detect subscription trials.",
-        link: "https://github.com/Stephen-Agyemang/FinTracker",
-        skills: ["FastAPI", "Python 3", "Pydantic", "Tailwind CSS", "Chart.js", "CLI", "Data Management", "AI Advisor"],
-        demoType: "financial-ledger"
-    },
-    */
     {
         id: "portfolio",
         name: "Portfolio Website",
@@ -52,5 +41,14 @@ export const projects = [
         liveUrl: "https://stephenagyemang.com",
         skills: ["React", "Vite", "JavaScript", "HTML", "CSS3", "OpenAI API", "Prompt Engineering", "Web Analytics"],
         demoType: "portfolio-dashboard"
+    },
+    {
+        id: "fintracker",
+        name: "FinTracker",
+        tagline: "AI-Powered Personal Finance Dashboard",
+        description: "A polished personal-finance app for tracking cash flow, budgets, and spending habits in one place. Its FastAPI and SQLite backend supports Plaid bank syncing or CSV imports, while a context-aware Gemini or Claude advisor streams data-grounded insights. FinTracker also detects recurring charges, normalizes subscription costs, and helps users act with cancellation links and AI-written emails.",
+        link: "https://github.com/Stephen-Agyemang/FinTracker",
+        skills: ["FastAPI", "Python", "SQLite", "JavaScript", "Plaid", "Gemini", "Claude", "Chart.js"],
+        demoType: "financial-ledger"
     }
 ];

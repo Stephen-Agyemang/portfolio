@@ -1,37 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { FaSun, FaMoon } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaBars, FaMoon, FaSun, FaTimes } from "react-icons/fa";
+import useIsMobile from "../hooks/useIsMobile";
 
-const Navbar = ({ theme = 'dark', toggleTheme }) => {
+const NAV_ITEMS = [
+  { id: "home", label: "Home" },
+  { id: "about", label: "About" },
+  { id: "skills", label: "Skills" },
+  { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" },
+  { id: "credentials", label: "Honors & Certs" },
+];
+
+const Navbar = ({ theme = "dark", toggleTheme }) => {
   const [scrolled, setScrolled] = useState(false);
   const [section, setSection] = useState("home");
-  const isMobile = window.innerWidth < 768;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
-      const threshold = window.innerWidth < 768 ? 50 : 100;
-      setScrolled(window.scrollY > threshold);
+      setScrolled(window.scrollY > (window.innerWidth < 768 ? 50 : 100));
 
-      const home = document.getElementById("home");
-      const about = document.getElementById("about");
-      const projects = document.getElementById("projects");
-      const skills = document.getElementById("skills");
-
-      const scrollPos = window.scrollY + 200; // Offset for better detection
-
+      const scrollPos = window.scrollY + 200;
       let newSection = "home";
 
-      if (home && about && projects && skills) {
-        // Check from bottom to top — Skills is now above Projects in the DOM
-        if (scrollPos >= projects.offsetTop) {
-          newSection = "projects";
-        } else if (scrollPos >= skills.offsetTop) {
-          newSection = "skills";
-        } else if (scrollPos >= about.offsetTop) {
-          newSection = "about";
-        } else {
-          newSection = "home";
-        }
-      }
+      NAV_ITEMS.forEach(({ id }) => {
+        const element = document.getElementById(id);
+        if (element && scrollPos >= element.offsetTop) newSection = id;
+      });
 
       setSection(newSection);
     };
@@ -39,8 +35,20 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-
   }, []);
+
+  useEffect(() => {
+    const closeDesktopMenu = () => {
+      if (window.innerWidth >= 768) setMobileOpen(false);
+    };
+    window.addEventListener("resize", closeDesktopMenu);
+    return () => window.removeEventListener("resize", closeDesktopMenu);
+  }, []);
+
+  const activeColor = theme === "dark" ? "#6c9a57" : "#50783d";
+  const navSurface = theme === "dark"
+    ? "rgba(6, 11, 24, 0.88)"
+    : "rgba(255, 255, 255, 0.92)";
 
   const navStyle = {
     position: "fixed",
@@ -51,144 +59,126 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
-    gap: isMobile ? "10px" : "20px",
-    padding: scrolled ? (isMobile ? "10px 16px" : "10px 30px") : (isMobile ? "12px 16px" : "15px 30px"),
+    gap: isMobile ? "10px" : "12px",
+    padding: scrolled || isMobile ? "10px 16px" : "15px 30px",
     zIndex: 1000,
-    backgroundColor: scrolled ? (theme === 'dark' ? "rgba(6, 11, 24, 0.75)" : "rgba(255, 255, 255, 0.85)") : "transparent",
-    backdropFilter: scrolled ? "blur(16px)" : "none",
-    WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
-    boxShadow: scrolled ? "0 4px 30px rgba(0, 0, 0, 0.15)" : "none",
-    borderBottom: scrolled ? (theme === 'dark' ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(108, 154, 87, 0.15)") : "none",
+    backgroundColor: scrolled || mobileOpen ? navSurface : "transparent",
+    backdropFilter: scrolled || mobileOpen ? "blur(16px)" : "none",
+    WebkitBackdropFilter: scrolled || mobileOpen ? "blur(16px)" : "none",
+    boxShadow: scrolled || mobileOpen ? "0 4px 30px rgba(0, 0, 0, 0.15)" : "none",
+    borderBottom: scrolled || mobileOpen
+      ? (theme === "dark" ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(108, 154, 87, 0.15)")
+      : "none",
     transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
   };
 
   const linkStyle = {
-    color: theme === 'dark' ? "#cbd5e1" : "#334155",
+    color: theme === "dark" ? "#cbd5e1" : "#334155",
     textDecoration: "none",
     fontWeight: 600,
-    fontSize: isMobile ? "0.85rem" : "1.02rem",
+    fontSize: "0.94rem",
     fontFamily: "var(--font-mono)",
-    padding: isMobile ? "4px 6px" : "6px 10px",
+    padding: "6px 8px",
     borderRadius: "6px",
     transition: "color 160ms ease, background-color 160ms ease, border-bottom 160ms ease",
     borderBottom: "2px solid transparent",
   };
 
-  const handleHover = (e, enter) => {
-    const accent = "#c9ec9e";
-    e.target.style.color = enter ? (theme === 'dark' ? accent : "#50783d") : (theme === 'dark' ? "#cbd5e1" : "#334155");
+  const handleHover = (event, enter) => {
+    event.currentTarget.style.color = enter
+      ? (theme === "dark" ? "#c9ec9e" : "#50783d")
+      : (theme === "dark" ? "#cbd5e1" : "#334155");
   };
 
-  const handleHomeClick = (e) => {
-    e.preventDefault();
-
-    if (section === "home") {
+  const handleNavClick = (event, id) => {
+    event.preventDefault();
+    setMobileOpen(false);
+    if (id === "home") {
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      const homeSection = document.getElementById("home");
-      if (homeSection) {
-        homeSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      return;
     }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const activeColor = theme === 'dark' ? "#6c9a57" : "#50783d";
+  const iconButtonStyle = {
+    width: "42px",
+    height: "36px",
+    borderRadius: "10px",
+    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(108, 154, 87, 0.25)",
+    background: theme === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(108, 154, 87, 0.08)",
+    color: theme === "dark" ? "#c9ec9e" : "#50783d",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
+  const links = NAV_ITEMS.map(({ id, label }) => (
+    <a
+      key={id}
+      href={`#${id}`}
+      className="interactive-scale-sm"
+      style={{
+        ...linkStyle,
+        ...(isMobile ? { width: "100%", boxSizing: "border-box", padding: "11px 12px" } : {}),
+        borderBottom: section === id ? `2px solid ${activeColor}` : "2px solid transparent",
+      }}
+      onClick={(event) => handleNavClick(event, id)}
+      onMouseOver={(event) => handleHover(event, true)}
+      onMouseOut={(event) => handleHover(event, false)}
+    >
+      {label}
+    </a>
+  ));
 
   return (
-    <nav style={navStyle}>
-      <a
-        href="#home"
-        className="interactive-scale-sm"
-        style={{
-          ...linkStyle,
-          borderBottom: section === "home" ? `2px solid ${activeColor}` : "2px solid transparent",
-        }}
-        onClick={handleHomeClick}
-        onMouseOver={(e) => handleHover(e, true)}
-        onMouseOut={(e) => handleHover(e, false)}
-      >
-        Home
-      </a>
-      <a
-        href="#about"
-        className="interactive-scale-sm"
-        style={{
-          ...linkStyle,
-          borderBottom: section === "about" ? `2px solid ${activeColor}` : "2px solid transparent",
-        }}
-        onMouseOver={(e) => handleHover(e, true)}
-        onMouseOut={(e) => handleHover(e, false)}
-      >
-        About
-      </a>
-      <a
-        href="#skills"
-        className="interactive-scale-sm"
-        style={{
-          ...linkStyle,
-          borderBottom: section === "skills" ? `2px solid ${activeColor}` : "2px solid transparent",
-        }}
-        onMouseOver={(e) => handleHover(e, true)}
-        onMouseOut={(e) => handleHover(e, false)}
-      >
-        Skills
-      </a>
-      <a
-        href="#projects"
-        className="interactive-scale-sm"
-        style={{
-          ...linkStyle,
-          borderBottom: section === "projects" ? `2px solid ${activeColor}` : "2px solid transparent",
-        }}
-        onMouseOver={(e) => handleHover(e, true)}
-        onMouseOut={(e) => handleHover(e, false)}
-      >
-        Projects
-      </a>
+    <nav style={navStyle} aria-label="Primary navigation">
+      {!isMobile && links}
 
-      {/* Futuristic sliding Day/Night Switch */}
       {toggleTheme && (
         <button
           onClick={toggleTheme}
-          aria-label="Toggle Theme"
+          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
           className="interactive-scale-sm"
+          style={iconButtonStyle}
+        >
+          {theme === "dark" ? <FaMoon size={13} /> : <FaSun size={13} />}
+        </button>
+      )}
+
+      {isMobile && (
+        <button
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
+          style={iconButtonStyle}
+        >
+          {mobileOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      )}
+
+      {isMobile && mobileOpen && (
+        <div
           style={{
-            background: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(108, 154, 87, 0.08)',
-            border: theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(108, 154, 87, 0.25)',
-            borderRadius: '20px',
-            width: '46px',
-            height: '24px',
-            padding: '2px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            position: 'relative',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            outline: 'none',
-            boxSizing: 'border-box',
-            marginLeft: '5px'
+            position: "absolute",
+            top: "100%",
+            left: "12px",
+            right: "12px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+            padding: "10px",
+            borderRadius: "0 0 14px 14px",
+            background: navSurface,
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(108,154,87,0.16)",
+            boxShadow: "0 18px 40px rgba(0,0,0,0.22)",
           }}
         >
-          <div style={{
-            width: '18px',
-            height: '18px',
-            borderRadius: '50%',
-            background: theme === 'dark' ? '#c9ec9e' : '#50783d',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'absolute',
-            left: theme === 'dark' ? '24px' : '2px',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            boxShadow: theme === 'dark' ? '0 0 8px #c9ec9e' : 'none'
-          }}>
-            {theme === 'dark' ? (
-              <FaMoon size={9} style={{ color: '#030712' }} />
-            ) : (
-              <FaSun size={9} style={{ color: '#ffffff' }} />
-            )}
-          </div>
-        </button>
+          {links}
+        </div>
       )}
     </nav>
   );
