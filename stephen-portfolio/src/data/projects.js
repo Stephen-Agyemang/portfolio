@@ -3,13 +3,13 @@ export const projects = [
         id: "monica",
         name: "MoNiCa.Ai",
         private: true,
-        tagline: "Real-Time AI Interview Coach",
-        description: "A real-time, low-latency AI interview platform that runs adaptive voice interviews, delivers live communication coaching, and generates private, actionable performance reports. Built around a React client, an async FastAPI backend, and a LiveKit agent pipeline (streaming speech-to-text → LLM → text-to-speech), deployed on Docker and Kubernetes.",
+        tagline: "Voice-Native AI Interviewer with an Execution-Verified Code Judge",
+        description: "A real-time voice interview platform. A LiveKit agent runs the whole loop over WebRTC — Silero VAD → Deepgram streaming STT → LLM → ElevenLabs TTS → Tavus avatar — with per-turn voice-to-voice latency instrumented end to end. In technical mode it doesn't read your code and guess: it runs it, in a self-hosted gVisor sandbox, against test cases it proved consistent before you ever saw the problem.",
         link: "https://github.com/Stephen-Agyemang/MoNiCa.Ai",
         // Repo isn't publicly reachable yet, so the Code button renders disabled.
         // Delete this line to turn the link back on — `link` above is still correct.
         codeDisabled: true,
-        skills: ["React", "FastAPI", "Python", "WebRTC", "LiveKit", "Deepgram", "Cartesia", "PostgreSQL", "Redis", "Docker", "Kubernetes", "OpenAI"],
+        skills: ["React 19", "FastAPI", "Python", "asyncio", "WebRTC", "LiveKit", "Deepgram", "ElevenLabs", "Tavus", "gVisor", "Terraform", "AWS ECS Fargate", "Kubernetes", "PostgreSQL", "Redis"],
         demoType: "interview-simulation"
     },
     {

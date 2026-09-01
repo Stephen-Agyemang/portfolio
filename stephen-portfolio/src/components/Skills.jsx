@@ -4,7 +4,7 @@ import useIsMobile from '../hooks/useIsMobile';
 import antigravityIcon from "../assets/antigravity_small.png";
 import { 
   FaVideo, FaGamepad, FaUtensils, FaChartLine, FaPalette,
-  FaCogs, FaDatabase, FaNetworkWired, FaCheckCircle
+  FaCogs, FaDatabase, FaNetworkWired, FaCheckCircle, FaShieldAlt, FaUserTie
 } from 'react-icons/fa';
 
 // Nodes definition with exact applied context status
@@ -34,14 +34,26 @@ const initialNodes = [
   { id: "redis", label: "Redis", isProject: false, x: 200, y: 380, color: "#d82c20", status: "MoNiCa Cache", iconClass: "devicon-redis-plain colored" },
   { id: "firebase", label: "Firebase", isProject: false, x: 900, y: 250, color: "#ffca28", status: "Firestore Data", iconClass: "devicon-firebase-plain colored" },
   { id: "cloudrun", label: "Cloud Run", isProject: false, x: 820, y: 90, color: "#4285f4", status: "Deployed API", iconClass: "devicon-googlecloud-plain colored" },
-  { id: "htmlcss", label: "HTML/CSS", isProject: false, x: 890, y: 320, color: "#e34f26", status: "FridgeJam UI", iconClass: "devicon-html5-plain colored" }
+  { id: "htmlcss", label: "HTML/CSS", isProject: false, x: 890, y: 320, color: "#e34f26", status: "FridgeJam UI", iconClass: "devicon-html5-plain colored" },
+  { id: "tavus", label: "Tavus", isProject: false, x: 330, y: 60, color: "#2dd4bf", status: "MoNiCa Avatar", icon: "FaUserTie" },
+  { id: "livekit", label: "LiveKit", isProject: false, x: 60, y: 250, color: "#a7d273", status: "MoNiCa Realtime", icon: "FaNetworkWired" },
+  { id: "gvisor", label: "gVisor", isProject: false, x: 340, y: 320, color: "#8b9dff", status: "Code Sandbox", icon: "FaShieldAlt" },
+  { id: "terraform", label: "Terraform", isProject: false, x: 60, y: 390, color: "#7b42bc", status: "MoNiCa IaC", iconClass: "devicon-terraform-plain colored" },
+  { id: "aws", label: "AWS Fargate", isProject: false, x: 300, y: 430, color: "#ff9900", status: "MoNiCa Deploy", iconClass: "devicon-amazonwebservices-plain colored" }
 ];
 
 // Edges (links) connecting Projects to Skills
 const initialLinks = [
   // MoNiCa.Ai — flagship. Proficient: Python, React, FastAPI, WebRTC, Docker, Git.
   // Familiar/supporting: Supabase, Redis, Kubernetes, JavaScript.
+  // Voice pipeline, execution sandbox and the AWS stack it ships on.
   { source: "monica", target: "webrtc" },
+  { source: "monica", target: "livekit" },
+  { source: "monica", target: "tavus" },
+  { source: "monica", target: "gvisor" },
+  { source: "monica", target: "terraform" },
+  { source: "monica", target: "aws" },
+  { source: "monica", target: "postgresql" },
   { source: "monica", target: "fastapi" },
   { source: "monica", target: "python" },
   { source: "monica", target: "react" },
@@ -77,6 +89,15 @@ const initialLinks = [
   
   { source: "portfolio", target: "react" },
   { source: "portfolio", target: "git" }
+];
+
+// Mobile deck membership. This used to match on devicon class substrings, which
+// filed FastAPI and WebRTC under "Languages" (they borrow the python/javascript
+// icons) and would silently drop any skill devicon doesn't ship an icon for.
+const MOBILE_DECK = [
+  { title: "Languages", ids: ["java", "python", "javascript", "c++"] },
+  { title: "Frameworks & AI", ids: ["react", "springboot", "fastapi", "webrtc", "livekit", "tavus", "gemini", "htmlcss"] },
+  { title: "DevOps & DB", ids: ["docker", "kubernetes", "terraform", "aws", "gvisor", "git", "postgresql", "supabase", "redis", "firebase", "cloudrun"] }
 ];
 
 const Skills = () => {
@@ -242,6 +263,16 @@ const Skills = () => {
     );
   };
 
+  // gVisor and LiveKit have no devicon, so those nodes carry a react-icon name.
+  const renderSkillIcon = (iconName) => {
+    switch (iconName) {
+      case 'FaNetworkWired': return <FaNetworkWired />;
+      case 'FaShieldAlt': return <FaShieldAlt />;
+      case 'FaUserTie': return <FaUserTie />;
+      default: return <FaCogs />;
+    }
+  };
+
   const renderProjectIcon = (iconName) => {
     switch (iconName) {
       case 'FaVideo': return <FaVideo />;
@@ -269,53 +300,32 @@ const Skills = () => {
            A. Mobile Fallback Deck (Clean lists, no physics)
            ============================================================ */
         <div className="skills-mobile-deck">
-          {/* Languages */}
-          <div className="skills-mobile-category">
-            <h3>Languages</h3>
-            <div className="skills-mobile-grid">
-              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('java') || n.iconClass?.includes('python') || n.iconClass?.includes('javascript') || n.iconClass?.includes('cplusplus'))).map(n => (
-                <div key={n.id} className="skills-mobile-card">
-                  <i className={`${n.iconClass} skills-mobile-card-icon`} />
-                  <div>
-                    <span className="skills-mobile-card-label">{n.label}</span>
-                    <span className="skills-mobile-card-status">{n.status}</span>
-                  </div>
-                </div>
-              ))}
+          {MOBILE_DECK.map(category => (
+            <div key={category.title} className="skills-mobile-category">
+              <h3>{category.title}</h3>
+              <div className="skills-mobile-grid">
+                {category.ids.map(id => {
+                  const n = initialNodes.find(node => node.id === id);
+                  if (!n) return null;
+                  return (
+                    <div key={id} className="skills-mobile-card">
+                      {n.iconClass ? (
+                        <i className={`${n.iconClass} skills-mobile-card-icon`} />
+                      ) : (
+                        <span className="skills-mobile-card-icon" style={{ color: n.color, display: 'flex' }}>
+                          {renderSkillIcon(n.icon)}
+                        </span>
+                      )}
+                      <div>
+                        <span className="skills-mobile-card-label">{n.label}</span>
+                        <span className="skills-mobile-card-status">{n.status}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-
-          {/* Frameworks & APIs */}
-          <div className="skills-mobile-category">
-            <h3>Frameworks & AI</h3>
-            <div className="skills-mobile-grid">
-              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('react') || n.iconClass?.includes('spring') || n.iconClass?.includes('google') || n.iconClass?.includes('html5') || n.id === 'webrtc' || n.id === 'fastapi')).map(n => (
-                <div key={n.id} className="skills-mobile-card">
-                  <i className={`${n.iconClass} skills-mobile-card-icon`} />
-                  <div>
-                    <span className="skills-mobile-card-label">{n.label}</span>
-                    <span className="skills-mobile-card-status">{n.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Database & DevOps */}
-          <div className="skills-mobile-category">
-            <h3>DevOps & DB</h3>
-            <div className="skills-mobile-grid">
-              {initialNodes.filter(n => !n.isProject && (n.iconClass?.includes('docker') || n.iconClass?.includes('kubernetes') || n.iconClass?.includes('postgresql') || n.iconClass?.includes('git') || n.iconClass?.includes('firebase') || n.iconClass?.includes('redis'))).map(n => (
-                <div key={n.id} className="skills-mobile-card">
-                  <i className={`${n.iconClass} skills-mobile-card-icon`} />
-                  <div>
-                    <span className="skills-mobile-card-label">{n.label}</span>
-                    <span className="skills-mobile-card-status">{n.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       ) : (
         /* ============================================================
@@ -388,7 +398,13 @@ const Skills = () => {
                   </>
                 ) : (
                   <>
-                    <i className={`${node.iconClass} graph-node-icon`} />
+                    {node.iconClass ? (
+                      <i className={`${node.iconClass} graph-node-icon`} />
+                    ) : (
+                      <div className="graph-node-icon" style={{ color: nodeColor }}>
+                        {renderSkillIcon(node.icon)}
+                      </div>
+                    )}
                     <div className="graph-node-label">{node.label}</div>
                   </>
                 )}
