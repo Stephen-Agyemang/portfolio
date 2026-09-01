@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './ProjectDemos.css';
-import { 
-  FaTimes, FaMicrophone, FaPaperPlane, FaPlay, FaSync, 
-  FaArrowRight, FaTerminal, FaCompass, FaCheckCircle, 
-  FaUtensils, FaFilePdf, FaPercentage, FaChartLine, FaExclamationTriangle,
-  FaPalette, FaTachometerAlt, FaSignal, FaSlidersH, FaUserCheck,
-  FaSkullCrossbones, FaCogs, FaDatabase, FaVideo, FaGamepad
+import MonicaAiDemo from './MonicaAiDemo';
+import {
+  FaTimes, FaPaperPlane, FaSync, FaCompass, FaCheckCircle,
+  FaUtensils, FaFilePdf, FaChartLine, FaExclamationTriangle,
+  FaPalette, FaTachometerAlt, FaSlidersH, FaUserCheck,
+  FaSkullCrossbones, FaDatabase
 } from 'react-icons/fa';
 
 const ProjectDemoModal = ({ project, onClose }) => {
@@ -86,134 +86,6 @@ const renderDemo = (demoType) => {
     default:
       return <p>No demo simulator configured.</p>;
   }
-};
-
-// ============================================================
-// 1. MoNiCa.AI - Live WebRTC Interview Simulator
-// ============================================================
-const MonicaAiDemo = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState([
-    { role: 'AI', text: "Hello Stephen! Let's start with a technical question. Can you walk me through the advantages of using WebRTC over WebSockets for bi-directional media streaming?" }
-  ]);
-  const [status, setStatus] = useState('Session Connected (Secure)');
-  const [wpm, setWpm] = useState(135);
-  const [fillers, setFillers] = useState(0);
-  const [confidence, setConfidence] = useState(94);
-  const [sentiment, setSentiment] = useState('Positive / Engaged');
-  
-  const handleMicrophoneClick = () => {
-    if (isRecording) {
-      setIsRecording(false);
-      setStatus('AI Processing audio chunks (FastAPI)...');
-      setTimeout(() => {
-        setTranscript(prev => [
-          ...prev,
-          { role: 'User', text: "Um, so WebRTC operates over UDP which is generally, like, way faster than WebSockets because it cuts out socket handshake loops..." },
-          { role: 'AI', text: "Excellent point! You correctly highlighted UDP transport and direct peer-to-peer data flows. Your talking rate was 142 WPM (Optimal), but I detected 2 filler words ('Um', 'Like'). Try keeping pauses silent to maintain a high professional tone!" }
-        ]);
-        setFillers(prev => prev + 2);
-        setWpm(142);
-        setConfidence(96);
-        setSentiment('Highly Assertive');
-        setStatus('WebRTC Pipeline Sync');
-      }, 1500);
-    } else {
-      setIsRecording(true);
-      setStatus('Recording user voice stream...');
-    }
-  };
-
-  return (
-    <div className="monica-webrtc-container">
-      {/* Left Column: Interactor screen */}
-      <div className="webrtc-video-feed">
-        <div className="avatar-screen">
-          {/* Animated robotic head */}
-          <div className={`avatar-svg-holder ${isRecording || status.includes('Processing') ? 'talking' : ''}`}>
-            <div className="avatar-head">
-              <div className="avatar-eyes">
-                <div className="avatar-eye blinking"></div>
-                <div className="avatar-eye blinking"></div>
-              </div>
-              <div className="avatar-mouth"></div>
-            </div>
-          </div>
-          
-          <div style={{ marginTop: '16px', color: '#c9ec9e', fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            {status.includes('Processing') ? '🎤 Monica is speaking...' : '🤖 Monica.AI (Active Room)'}
-          </div>
-
-          {/* User webcam overlay panel */}
-          <div className="user-webcam-overlay">
-            <div className="webcam-detection-box"></div>
-            <div style={{ position: 'absolute', bottom: '6px', left: '6px', fontSize: '0.55rem', color: '#c9ec9e', background: 'rgba(0,0,0,0.6)', padding: '2px 4px', borderRadius: '2px' }}>
-              👤 STEPHEN (WPM: {wpm})
-            </div>
-            <FaVideo style={{ fontSize: '1.25rem', color: 'rgba(255,255,255,0.15)' }} />
-          </div>
-        </div>
-
-        {/* Real-time speech wave lines */}
-        <div style={{ background: '#050810', height: '40px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-          <div className="avatar-wave">
-            <div className="avatar-wave-bar"></div>
-            <div className="avatar-wave-bar"></div>
-            <div className="avatar-wave-bar"></div>
-            <div className="avatar-wave-bar"></div>
-            <div className="avatar-wave-bar"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Column: Coaching Telemetry Panel */}
-      <div className="coaching-pane" style={{ border: 'none', background: 'rgba(255, 255, 255, 0.02)' }}>
-        <h4 style={{ margin: '0 0 10px', color: '#c9ec9e', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.9rem' }}>Vocal Coach Bounding Diagnostics</h4>
-        
-        <div className="monica-transcript" style={{ flex: 1, maxHeight: '200px' }}>
-          {transcript.map((line, idx) => (
-            <div key={idx} style={{ marginBottom: '12px', borderLeft: line.role === 'AI' ? '2.5px solid #6c9a57' : '2.5px solid #0899e7', paddingLeft: '8px' }}>
-              <span style={{ color: line.role === 'AI' ? '#c9ec9e' : '#0899e7', fontSize: '0.7rem', fontWeight: 'bold', display: 'block', textTransform: 'uppercase' }}>
-                {line.role === 'AI' ? '🤖 MoNiCa.AI INTERVIEWER' : '👤 CANDIDATE (STEPHEN)'}:
-              </span>
-              <p style={{ margin: '4px 0 0', fontSize: '0.8rem', lineHeight: '1.45' }}>{line.text}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="monica-stats" style={{ margin: '16px 0', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
-          <div className="stat-circle">
-            <span className="stat-circle-val">{wpm}</span>
-            <span className="stat-circle-lbl">WPM Pace</span>
-          </div>
-          <div className="stat-circle">
-            <span className="stat-circle-val" style={{ color: fillers > 2 ? '#ff5e5e' : '#c9ec9e' }}>{fillers}</span>
-            <span className="stat-circle-lbl">Filler Words</span>
-          </div>
-          <div className="stat-circle">
-            <span className="stat-circle-val">{confidence}%</span>
-            <span className="stat-circle-lbl">Confidence</span>
-          </div>
-          <div className="stat-circle">
-            <span className="stat-circle-val" style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{sentiment}</span>
-            <span className="stat-circle-lbl">Sentiment</span>
-          </div>
-        </div>
-
-        <div className="coaching-controls">
-          <button 
-            className={`mic-active-btn ${isRecording ? 'recording' : ''}`}
-            onClick={handleMicrophoneClick}
-          >
-            <FaMicrophone /> {isRecording ? 'MUTE AND RUN DIALOG ENGINE' : 'ACTIVATE VOICE COCH STREAM'}
-          </button>
-          <p style={{ margin: 0, fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
-            PIPELINE SIGNAL: <strong style={{ color: '#c9ec9e' }}>{status}</strong>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 // ============================================================
