@@ -31,7 +31,7 @@ const initialNodes = [
   { id: "c++", label: "C++", isProject: false, x: 820, y: 360, color: "#00599c", status: "Foundation", iconClass: "devicon-cplusplus-plain colored" },
   { id: "javascript", label: "JavaScript", isProject: false, x: 360, y: 150, color: "#f0db4f", status: "Core Language", iconClass: "devicon-javascript-plain colored" },
   { id: "postgresql", label: "PostgreSQL", isProject: false, x: 560, y: 340, color: "#336791", status: "Zork Leaderboards", iconClass: "devicon-postgresql-plain colored" },
-  { id: "redis", label: "Redis", isProject: false, x: 200, y: 380, color: "#d82c20", status: "MoNiCa Cache", iconClass: "devicon-redis-plain colored" },
+  { id: "redis", label: "Redis", isProject: false, x: 200, y: 380, color: "#d82c20", status: "Cache & Limits", iconClass: "devicon-redis-plain colored" },
   { id: "firebase", label: "Firebase", isProject: false, x: 900, y: 250, color: "#ffca28", status: "Firestore Data", iconClass: "devicon-firebase-plain colored" },
   { id: "cloudrun", label: "Cloud Run", isProject: false, x: 820, y: 90, color: "#4285f4", status: "Deployed API", iconClass: "devicon-googlecloud-plain colored" },
   { id: "htmlcss", label: "HTML/CSS", isProject: false, x: 890, y: 320, color: "#e34f26", status: "FridgeJam UI", iconClass: "devicon-html5-plain colored" },
@@ -88,6 +88,7 @@ const initialLinks = [
   */
   
   { source: "portfolio", target: "react" },
+  { source: "portfolio", target: "redis" },
   { source: "portfolio", target: "git" }
 ];
 

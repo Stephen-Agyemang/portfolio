@@ -39,7 +39,7 @@ export const projects = [
         description: "A personal portfolio website built with React and Vite, featuring a glassmorphic background layer, custom CSS animations, an AI-powered email draft assistant that generates personalized outreach, and an intelligent chatbot assistant using OpenAI's GPT-4 API to help visitors query experience through natural dialogue.",
         link: "https://github.com/Stephen-Agyemang/stephen-portfolio",
         liveUrl: "https://stephenagyemang.com",
-        skills: ["React", "Vite", "JavaScript", "HTML", "CSS3", "OpenAI API", "Prompt Engineering", "Web Analytics"],
+        skills: ["React", "Vite", "JavaScript", "HTML", "CSS3", "OpenAI API", "Upstash Redis", "Prompt Engineering", "Web Analytics"],
         demoType: "portfolio-dashboard"
     },
     {
