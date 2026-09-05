@@ -104,14 +104,18 @@ button:focus-visible {
 }
 
 :root[data-theme="light"] {
-  --bg-color: #f8fafc;
+  /* Ground, ~luminance 232. Surfaces above it stay near-white, so the stack
+     reads desk -> panel -> paper instead of one flat wash. */
+  --bg-color: #e4e9f0;
   --text-color: #334155;
   --text-title: #0f172a;
   --card-bg-init: radial-gradient(rgba(108, 154, 87, 0.015) 1px, transparent 0), linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(241, 245, 249, 0.85));
   --card-bg-hover: radial-gradient(rgba(108, 154, 87, 0.04) 1px, transparent 0), linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(241, 245, 249, 0.95));
-  --card-border: rgba(108, 154, 87, 0.18);
-  --grid-line-color: rgba(108, 154, 87, 0.025);
+  --card-border: rgba(108, 154, 87, 0.24);
+  --grid-line-color: rgba(108, 154, 87, 0.075);
   --ambient-opacity: 0.2;
+  --floor-line: rgba(108, 154, 87, 0.17);
+  --floor-opacity: 0.88;
   --telemetry-color: rgba(108, 154, 87, 0.6);
   --chat-bg: rgba(255, 255, 255, 0.95);
   --chat-border: rgba(108, 154, 87, 0.3);
@@ -136,7 +140,7 @@ button:focus-visible {
   --footer-border: rgba(108, 154, 87, 0.15);
   
   /* Hero Theme Variables (Light Mode) */
-  --hero-bg: radial-gradient(circle at 20% 20%, rgba(108, 154, 87, 0.05), transparent 30%), radial-gradient(circle at 80% 10%, rgba(56, 189, 248, 0.12), transparent 35%), #f1f5f9;
+  --hero-bg: radial-gradient(circle at 20% 20%, rgba(108, 154, 87, 0.05), transparent 30%), radial-gradient(circle at 80% 10%, rgba(56, 189, 248, 0.12), transparent 35%), #fbfcfd;
   --hero-border: 2.5px solid rgba(108, 154, 87, 0.35);
   --hero-shadow: 0 15px 40px rgba(108, 154, 87, 0.05), 0 30px 80px rgba(56, 189, 248, 0.04);
   --hero-text-grey: #64748b;
@@ -161,7 +165,7 @@ button:focus-visible {
   --app-bg: radial-gradient(circle at 20% 20%, rgba(108, 154, 87, 0.05), transparent 30%),
             radial-gradient(circle at 80% 10%, rgba(56, 189, 248, 0.12), transparent 35%),
             radial-gradient(circle at 50% 90%, rgba(108, 154, 87, 0.03), transparent 40%),
-            #f8fafc;
+            #e4e9f0;
   --title-shadow: none;
 
   /* Email Assistant White Glass Theme Variables (Light Mode) */
