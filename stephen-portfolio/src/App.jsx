@@ -2,6 +2,8 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
+import BackgroundField from "./components/BackgroundField.jsx";
+import SketchDesk from "./components/SketchDesk.jsx";
 
 const About = lazy(() => import("./components/About.jsx"));
 const Projects = lazy(() => import("./components/Projects.jsx"));
@@ -85,12 +87,8 @@ function App() {
       overflow: "hidden",
       transition: "background 0.4s ease, color 0.4s ease"
     }}>
-      {/* Dynamic Ambient Background Lights */}
-      <div className="ambient-glow-wrapper">
-        <div className="ambient-glow-1" />
-        <div className="ambient-glow-2" />
-        <div className="ambient-glow-3" />
-      </div>
+      <BackgroundField />
+      <SketchDesk />
       <Navbar theme={theme} toggleTheme={toggleTheme} />
       <main>
         <Hero />

@@ -39,6 +39,8 @@ button:focus-visible {
   --card-border: rgba(255, 255, 255, 0.05);
   --grid-line-color: rgba(255, 255, 255, 0.015);
   --ambient-opacity: 1;
+  --floor-line: rgba(167, 210, 115, 0.16);
+  --floor-opacity: 1;
   --telemetry-color: rgba(255, 255, 255, 0.25);
   --chat-bg: rgba(10, 15, 30, 0.9);
   --chat-border: rgba(167, 210, 115, 0.25);
@@ -193,67 +195,6 @@ body {
   position: relative;
   transition: background-color 0.4s ease, color 0.4s ease;
 }
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grid-line-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
-  z-index: 0;
-  transition: background-image 0.4s ease;
-}
-
-/* ============================================================
-   GLOBAL CYBER ACCENTS & AMBIENT LIGHT LEAKS
-   ============================================================ */
-
-.ambient-glow-wrapper {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  opacity: var(--ambient-opacity);
-  transition: opacity 0.4s ease;
-}
-
-.ambient-glow-1 {
-  position: absolute;
-  top: 15%;
-  left: -150px;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(167, 210, 115, 0.05) 0%, transparent 70%);
-  filter: blur(90px);
-}
-
-.ambient-glow-2 {
-  position: absolute;
-  top: 45%;
-  right: -200px;
-  width: 700px;
-  height: 700px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
-  filter: blur(100px);
-}
-
-.ambient-glow-3 {
-  position: absolute;
-  top: 75%;
-  left: -100px;
-  width: 650px;
-  height: 650px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(192, 132, 252, 0.05) 0%, transparent 70%);
-  filter: blur(95px);
-}
-
 
 /* ============================================================
    CYBER METRICS & TELEMETRY SECTION HEADERS

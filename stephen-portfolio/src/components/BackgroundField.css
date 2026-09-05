@@ -1,0 +1,198 @@
+/* ============================================================
+   BACKGROUND DEPTH FIELD
+
+   Three fixed layers that move at different rates on scroll, so the
+   page reads as depth instead of a flat sheet. Everything here is
+   transform-only — compositor work, no repaint — and inert to the
+   pointer. Registering the scroll offsets as <number> means the
+   calc()s below can never fail to parse.
+   ============================================================ */
+
+@property --far-shift {
+    syntax: "<number>";
+    initial-value: 0;
+    inherits: true;
+}
+
+@property --floor-shift {
+    syntax: "<number>";
+    initial-value: 0;
+    inherits: true;
+}
+
+@property --scroll-y {
+    syntax: "<number>";
+    initial-value: 0;
+    inherits: true;
+}
+
+/* The compound selector is deliberate: App.css carries a
+   `.app-container > *` rule that would otherwise win the tie and drop
+   this back into the flow. */
+.app-container > .bg-field {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    contain: layout paint;
+}
+
+/* --- Far grid ------------------------------------------------------
+   The deepest layer, and the slowest. One tile of overscan top and
+   bottom so the wrapped offset never exposes an edge. */
+.bg-far-grid {
+    position: absolute;
+    inset: -80px 0;
+    background-image:
+        linear-gradient(var(--grid-line-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px);
+    background-size: 80px 80px;
+    transform: translate3d(0, calc(var(--far-shift, 0) * -1px), 0);
+    /* Hands off to the floor rather than lying on top of it. Two grids of
+       similar weight in the same band cancel each other's read — you see
+       orthogonal lines over converging ones and the perspective disappears.
+       This fades out exactly where the floor fades in, so the viewport reads
+       as a wall above a floor instead of one flat plaid. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 34%, transparent 70%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 34%, transparent 70%);
+    will-change: transform;
+    transition: background-image 0.4s ease;
+}
+
+/* --- Floor plane ---------------------------------------------------
+   Where the 3D actually comes from: the same grid tipped away from the
+   viewer so its lines converge on a vanishing point. One rotateX and a
+   perspective origin — no WebGL, no library. The mask fades out the
+   dense pile-up at the horizon so it doesn't read as a hard bright
+   line. */
+.bg-floor {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 58vh;
+    overflow: hidden;
+    perspective: 320px;
+    perspective-origin: 50% 0%;
+    /* Dark ground takes a light grid far better than light ground takes a dark
+       one, so light mode damps the whole plane rather than only its colour. */
+    opacity: var(--floor-opacity, 1);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 62%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 62%);
+}
+
+.bg-floor-plane {
+    position: absolute;
+    bottom: 0;
+    left: -50%;
+    width: 200%;
+    height: 180%;
+    /* Pivot on the near edge. Rotating about the far edge instead tips the
+       whole plane up out of the box, where overflow clips it away. */
+    transform-origin: 50% 100%;
+    transform: rotateX(74deg) translate3d(0, calc(var(--floor-shift, 0) * 1px), 0);
+    background-image:
+        linear-gradient(var(--floor-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--floor-line) 1px, transparent 1px);
+    background-size: 80px 80px;
+    will-change: transform;
+}
+
+/* --- Ambient light leaks -------------------------------------------
+   Unchanged in colour and placement, but now moving. `translate` carries
+   the scroll parallax and `transform` carries the slow drift, so the two
+   compose instead of one overwriting the other. Rates differ in sign as
+   well as size so the orbs spread apart down the page rather than all
+   sliding off the same edge. */
+.ambient-glow-wrapper {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: var(--ambient-opacity);
+    transition: opacity 0.4s ease;
+}
+
+.ambient-glow-1,
+.ambient-glow-2,
+.ambient-glow-3 {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+}
+
+.ambient-glow-1 {
+    top: 15%;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(167, 210, 115, 0.05) 0%, transparent 70%);
+    filter: blur(90px);
+    translate: 0 calc(var(--scroll-y, 0) * 0.04px);
+    animation: bg-drift-1 53s ease-in-out infinite alternate;
+}
+
+.ambient-glow-2 {
+    top: 45%;
+    right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
+    filter: blur(100px);
+    translate: 0 calc(var(--scroll-y, 0) * -0.07px);
+    animation: bg-drift-2 67s ease-in-out infinite alternate;
+}
+
+.ambient-glow-3 {
+    top: 75%;
+    left: -100px;
+    width: 650px;
+    height: 650px;
+    background: radial-gradient(circle, rgba(192, 132, 252, 0.05) 0%, transparent 70%);
+    filter: blur(95px);
+    translate: 0 calc(var(--scroll-y, 0) * -0.05px);
+    animation: bg-drift-3 61s ease-in-out infinite alternate;
+}
+
+@keyframes bg-drift-1 {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(90px, -60px, 0); }
+}
+
+@keyframes bg-drift-2 {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-70px, 80px, 0); }
+}
+
+@keyframes bg-drift-3 {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(60px, 70px, 0); }
+}
+
+/* Three 600px+ layers under a 90px blur are the one real cost here, and
+   moving them forces the compositor to keep each on its own texture.
+   Phones keep the light, lose the motion; the grids stay parallaxed
+   because they carry no filter. */
+@media (max-width: 768px) {
+    .ambient-glow-1,
+    .ambient-glow-2,
+    .ambient-glow-3 {
+        translate: none;
+        animation: none;
+    }
+
+    .bg-floor {
+        height: 42vh;
+    }
+}
+
+/* The tilt is geometry, not motion, so it stays. The scroll offsets are
+   already 0 here because the listener never attaches. */
+@media (prefers-reduced-motion: reduce) {
+    .ambient-glow-1,
+    .ambient-glow-2,
+    .ambient-glow-3 {
+        translate: none;
+        animation: none;
+    }
+}

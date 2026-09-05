@@ -1,6 +1,7 @@
 import useIsMobile from '../hooks/useIsMobile';
 import PhotoCarousel from './PhotoCarousel.jsx';
 import { moments } from '../data/moments';
+import SketchFrame from './SketchFrame.jsx';
 
 const About = () => {
   const isMobile = useIsMobile();
@@ -98,9 +99,8 @@ const About = () => {
         padding: isMobile ? "44px 16px" : "60px 20px",
       }}
     >
+      <SketchFrame>
       <div style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
         width: "100%",
         display: "flex",
         alignItems: "center",
@@ -161,6 +161,7 @@ const About = () => {
         </p>
       </div>
       </div>
+      </SketchFrame>
     </section>
   );
 };
