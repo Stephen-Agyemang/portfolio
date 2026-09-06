@@ -1,14 +1,14 @@
 /**
  * Roles rendered by the Experience timeline, newest first.
  *
- * Mirrors `workExperience` in `api/linkedinProfile.js` and `organizations` in
- * `api/handshakeProfile.js`, which feed the chat assistant. Same split as
+ * Mirrors `workExperience` in `api/linkedinProfile.js`, which feeds the chat
+ * assistant. (`api/handshakeProfile.js` is parked and no longer read.) Same split as
  * `credentials.js`: `api/` deploys to Vercel while `src/` builds with Vite, so
  * the lists are kept separate rather than coupling the two builds. Add new
  * roles in both places.
  *
- * Dates and descriptions follow Stephen's resume, which closes out the STEM
- * Guide and IT Intern roles that LinkedIn still shows as ongoing.
+ * Dates and descriptions follow Stephen's resume. As of Fall 2026 the ML
+ * research, IT Intern, STEM Guide, and Overnight Host roles have all ended.
  *
  * `current: true` renders the pulsing "PRESENT" indicator, which supplies the
  * end of the date range. Past roles set `current: false` and should carry an
@@ -21,10 +21,11 @@ export const experience = [
         title: "Undergraduate Machine Learning Researcher",
         org: "DePauw University — Computer Science Department",
         start: "May 2026",
-        current: true,
+        end: "August 2026",
+        current: false,
         location: "Greencastle, IN · Full-time, Hybrid",
         description:
-            "Collaborate with a faculty researcher and two student researchers to train and evaluate Transformer-based PyTorch models for monocular 3D human pose estimation. Benchmark models, run ablation studies, and debug pipelines to validate architectural decisions, and evaluate models for browser deployment with ONNX Runtime.",
+            "Collaborated with a faculty researcher and two student researchers to train and evaluate Transformer-based PyTorch models for monocular 3D human pose estimation. Benchmarked models, ran ablation studies, and debugged pipelines to validate architectural decisions, and evaluated models for browser deployment with ONNX Runtime.",
         skills: ["PyTorch", "Transformers", "3D Pose Estimation", "ONNX Runtime", "Research"],
     },
     {
@@ -43,7 +44,7 @@ export const experience = [
     {
         id: "stem-guide",
         type: "work",
-        title: "STEM Guide",
+        title: "STEM Guide / TA",
         org: "DePauw University — Department of Computer Science",
         start: "January 2026",
         end: "May 2026",
@@ -59,10 +60,11 @@ export const experience = [
         title: "Admissions Overnight Host",
         org: "DePauw University",
         start: "January 2026",
-        current: true,
+        end: "May 2026",
+        current: false,
         location: "Greencastle, IN · Part-time, On-site",
         description:
-            "Serve as a personal student ambassador for prospective students during overnight campus visits, introducing them to academic and social life at DePauw and ensuring their safety and comfort throughout the stay.",
+            "Served as a personal student ambassador for prospective students during overnight campus visits, introducing them to academic and social life at DePauw and ensuring their safety and comfort throughout the stay.",
         skills: ["Communication", "Community Building"],
     },
     {
@@ -88,18 +90,5 @@ export const experience = [
         description:
             "Participate in a 16,000+ member technical community for Black and Latinx computer science students through career development, peer support, and professional networking.",
         skills: ["Career Development", "Networking", "Community"],
-    },
-    {
-        id: "student-orgs",
-        type: "lead",
-        title: "Student Leader",
-        org: "DePauw International Students Association & African Students Association",
-        start: "September 2025",
-        end: "May 2026",
-        current: false,
-        location: "Greencastle, IN",
-        description:
-            "Led two of DePauw's cultural student organizations, supporting programming and community building for international and African students on campus. Also a member of the DePauw Futbol Club.",
-        skills: ["Leadership", "Community Building", "Event Planning"],
     },
 ];

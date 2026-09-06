@@ -18,10 +18,11 @@ Create `.env.local` in this directory. These are read server-side by the API fun
 
 ```
 OPENAI_API_KEY=sk-...              # required
-FIREBASE_SERVICE_ACCOUNT={"..."}   # optional — full service account JSON, single line
+UPSTASH_REDIS_REST_URL=https://... # optional
+UPSTASH_REDIS_REST_TOKEN=...       # optional
 ```
 
-`FIREBASE_SERVICE_ACCOUNT` enables Firestore chat logging. Without it, [`chatLogger.js`](api/chatLogger.js) leaves `db` null and every log call returns early, so chat behaves normally.
+The Upstash pair enables chat logging and cross-instance rate limiting. Without both, [`upstash.js`](api/upstash.js) reports `redisAvailable === false`: every log call returns early and rate limiting falls back to per-instance memory, so chat behaves normally.
 
 ## API
 
@@ -37,19 +38,20 @@ The remaining files in [`api/`](api/) are **helper modules imported by `chat.js`
 | Module | Role |
 |---|---|
 | [`githubFetcher.js`](api/githubFetcher.js) | Fetches live repo data to ground the chatbot's answers |
-| [`linkedinProfile.js`](api/linkedinProfile.js) | Static LinkedIn profile context |
-| [`handshakeProfile.js`](api/handshakeProfile.js) | Static Handshake profile context |
-| [`chatLogger.js`](api/chatLogger.js) | Writes exchanges to the Firestore `chatLogs` collection |
-| [`firestore.js`](api/firestore.js) | Shared Firestore handle — isolated because `db.settings()` may only be called once per instance |
+| [`linkedinProfile.js`](api/linkedinProfile.js) | Static LinkedIn profile context — the single source of truth for profile facts |
+| [`handshakeProfile.js`](api/handshakeProfile.js) | **Parked.** No longer imported; kept so it can be switched back on |
+| [`chatLogger.js`](api/chatLogger.js) | Appends exchanges to the Redis `chatLogs` list, `LTRIM`-capped at 500 |
+| [`upstash.js`](api/upstash.js) | Dependency-free Upstash Redis REST client (pipeline + fire-and-forget) |
 | [`guards.js`](api/guards.js) | CORS allowlist, per-IP and global rate limiting, payload clamping |
 
 ### Implementation notes
 
 - GitHub context is cached in module scope for 10 minutes (`CONTEXT_CACHE_TTL_MS`) and capped at 25 projects / 220 chars per description to bound prompt size.
-- Firestore runs with `preferRest: true`. gRPC's default transport stalls on Vercel's serverless network until it times out.
+- Upstash replaced `firebase-admin`, whose transitive gRPC/protobuf tree cost ~19MB on every cold start just to back a rate limiter. Upstash speaks plain HTTP, so `fetch` is the whole client.
+- Upstash calls carry a 2s timeout. Without a ceiling, one stalled call would hold the chat response open behind the rate-limit check.
 - `logChatMessage` never throws, and callers `await` it so the write lands before the function freezes after responding.
-- Rate limiting checks in-memory state first, so a caller already over quota on this instance is rejected without a Firestore round trip. Firestore is then authoritative across instances. Both fail open — see [Abuse Protection](../README.md#abuse-protection).
-- Rate-limit documents carry an `expiresAt` field (48h out), but **no TTL policy is enabled** — the `rateLimits` collection is cleared manually by choice. It grows by one doc per unique visitor per day. Nothing breaks if it's left alone; docs are keyed by UTC day, so stale ones are never read.
+- Rate limiting checks in-memory state first, so a caller already over quota on this instance is rejected without a network round trip. Redis is then authoritative across instances. Both fail open — see [Abuse Protection](../README.md#abuse-protection).
+- Rate-limit keys are `INCR`-based with a TTL (burst keys expire with the window, daily keys at UTC midnight), so a pipeline replaces the old read-modify-write transaction and expiry needs no manual cleanup.
 
 ## Build output
 
@@ -58,4 +60,5 @@ Chunking is configured in [`vite.config.js`](vite.config.js) via `manualChunks`:
 - `index.js` — Navbar + Hero, the critical path, loads immediately
 - `vendor-react.js` — React, ReactDOM, scheduler; cached across deploys
 - `vendor-icons.js` — react-icons; cached across deploys
-- Everything else — About, Projects, Skills, ProjectDiscovery, EmailDraftAssistant, Footer — is `React.lazy()`-loaded per [`App.jsx`](src/App.jsx)
+- Everything else — About, Experience, Projects, Skills, Credentials, ProjectDiscovery, EmailDraftAssistant, Footer — is `React.lazy()`-loaded per [`App.jsx`](src/App.jsx)
+- `ProjectDemoModal` is lazy-loaded a second level down, from [`Projects.jsx`](src/components/Projects.jsx), and pulls `MonicaAiDemo` in with it — so the demo bundle only downloads when a visitor actually opens a demo

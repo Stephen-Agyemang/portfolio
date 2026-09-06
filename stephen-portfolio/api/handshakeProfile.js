@@ -14,7 +14,7 @@ export function getHandshakeProfile() {
         major: "Computer Science",
         minors: ["Theatre", "Mathematics"],
         degree: "Bachelor of Liberal Arts",
-        schoolYear: "Sophomore",
+        schoolYear: "Rising Junior",
         graduationYear: "2028",
         gpa: "3.95 cumulative (4.0 current semester)",
         languages: ["English (Native or bilingual proficiency)"],
@@ -44,18 +44,6 @@ export function getHandshakeProfile() {
                 role: "Design Lead",
                 location: "Greencastle, IN",
                 dates: "September 2025 – Present",
-            },
-            {
-                name: "African Students Association (ASA)",
-                role: "First-Year Student Leader",
-                location: "Greencastle, IN",
-                dates: "September 2025 – May 2026",
-            },
-            {
-                name: "DePauw International Student Association",
-                role: "Student Leader",
-                location: "Greencastle, IN",
-                dates: "September 2025 – May 2026",
             },
             {
                 name: "ColorStack",

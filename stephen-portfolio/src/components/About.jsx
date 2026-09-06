@@ -133,7 +133,7 @@ const About = () => {
           fontFamily: "var(--font-mono)"
         }}>
           Hi, I'm Stephen! I'm a Computer Science and Honor Scholar at DePauw University,
-          entering my second sophomore semester this fall. I just love asking "why." For me,
+          a rising junior this fall. I just love asking "why." For me,
           software engineering is all about diving into the backend and figuring out how everything
           connects. Spending hours connecting dots is genuinely my thing.
         </p>

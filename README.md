@@ -10,6 +10,10 @@ Personal portfolio site built with **React 19** and **Vite 7** — a terminal/HU
 - **Email Draft Assistant** — generates a tailored outreach draft from a short prompt
 - **Interactive skills graph** — force-directed, drag-enabled canvas on desktop; static grid on mobile
 - **Project showcase** — per-project color theming with embedded live demo modals
+- **MoNiCa.Ai demo** — self-contained walkthrough of the AI interviewer pipeline
+- **Experience timeline** — roles and leadership, with a live indicator for ongoing positions
+- **Credentials** — certifications, honors, and awards
+- **Photo carousel** — campus and conference moments in a framed viewport
 - **Dual theme** — dark/light switcher, persisted to `localStorage`
 - **HUD aesthetic** — animated telemetry bar, rotating reticle frame, ambient glow layers
 
@@ -23,7 +27,7 @@ Personal portfolio site built with **React 19** and **Vite 7** — a terminal/HU
 | Fonts | Inter + DM Mono, self-hosted via `@fontsource` |
 | AI | OpenAI `gpt-5.6-luna` (streaming) |
 | Backend | Vercel Serverless Functions |
-| Chat logs | Cloud Firestore (`firebase-admin`) |
+| Chat logs & rate limiting | Upstash Redis (REST, dependency-free client) |
 | Hosting | Firebase Hosting (static) + Vercel (API) |
 
 ## Architecture
@@ -36,7 +40,7 @@ graph LR
     U -->|/api/chat, /api/email| V[Vercel Functions]
     V --> O[OpenAI API]
     V --> G[GitHub API]
-    V --> FS[(Firestore chat logs)]
+    V --> R[(Upstash Redis — chat logs, rate limits)]
 ```
 
 This is deliberate — Firebase Hosting serves static files only, and rewriting the serverless functions as Cloud Functions would mean putting the project on the Blaze plan for no real gain.
@@ -65,7 +69,8 @@ Server-side only — read by the Vercel functions, never bundled into the client
 | Variable | Required | Purpose |
 |---|---|---|
 | `OPENAI_API_KEY` | Yes | Powers `/api/chat` and `/api/email` |
-| `FIREBASE_SERVICE_ACCOUNT` | No | Service account JSON. Backs Firestore chat logging and cross-instance rate limiting. Without it both degrade gracefully — logging no-ops and rate limiting falls back to per-instance memory. |
+| `UPSTASH_REDIS_REST_URL` | No | Upstash Redis REST endpoint. Backs chat logging and cross-instance rate limiting. |
+| `UPSTASH_REDIS_REST_TOKEN` | No | Upstash REST auth token. Without this pair both features degrade gracefully — logging no-ops and rate limiting falls back to per-instance memory. |
 | `ALLOWED_ORIGINS` | No | Comma-separated CORS allowlist. Defaults to the Firebase, Vercel, and localhost origins. |
 | `AI_DAILY_REQUEST_CAP` | No | Global ceiling on AI requests per UTC day across all callers. Defaults to `1000`. |
 
@@ -82,7 +87,7 @@ The AI endpoints are public and unauthenticated, so they're guarded in [`api/gua
 | Payload | Client-supplied projects clamped to 25 entries, 300 chars per field |
 | Origin | Non-allowlisted origins get `403` |
 
-Counters live in Firestore keyed by a **SHA-256 hash of the IP** — raw addresses are never stored — and fall back to in-memory counting if Firestore is unavailable, so an outage degrades the limiter instead of taking the chatbot down. The global cap is the guard that actually bounds worst-case spend, since per-IP limits alone don't stop someone rotating addresses.
+Counters live in Upstash Redis keyed by a **SHA-256 hash of the IP** — raw addresses are never stored — and fall back to in-memory counting if Redis is unavailable or unconfigured, so an outage degrades the limiter instead of taking the chatbot down. Keys carry a TTL, so expiry is automatic rather than a manual cleanup chore. The global cap is the guard that actually bounds worst-case spend, since per-IP limits alone don't stop someone rotating addresses.
 
 Rate-limited requests return `429` with a `Retry-After` header and a human-readable message that the UI shows directly.
 
@@ -95,19 +100,16 @@ Both hosts deploy automatically from `main`:
 | Firebase Hosting | [GitHub Actions](.github/workflows/firebase-hosting.yml) | Static site at the live URL |
 | Vercel | Git integration | `/api/*` serverless functions |
 
-The Firebase workflow builds `stephen-portfolio/` and deploys to the `live` channel using a `FIREBASE_DEPLOY_SERVICE_ACCOUNT` repo secret.
+The Firebase workflow builds `stephen-portfolio/` and deploys to the `live` channel using a `FIREBASE_DEPLOY_SERVICE_ACCOUNT` repo secret. That account holds `firebasehosting.admin` and `firebase.viewer` and nothing else, so a leaked CI secret can only touch Hosting. Firebase is now used **only** for static hosting — the runtime moved off `firebase-admin` to Upstash Redis, so no Firestore credential is needed at runtime any more.
 
-Note that this is a **different credential** from the `FIREBASE_SERVICE_ACCOUNT` env var above, and deliberately so:
+> **Deploying `api/` changes:** a Firebase deploy only ships the static site. Changes under `stephen-portfolio/api/` reach production through Vercel, and if the Git integration hasn't picked them up, the API silently stays on the previous version. Push the API explicitly when you've touched it:
+>
+> ```bash
+> cd stephen-portfolio
+> vercel --prod
+> ```
 
-| | `FIREBASE_DEPLOY_SERVICE_ACCOUNT` | `FIREBASE_SERVICE_ACCOUNT` |
-|---|---|---|
-| Stored in | GitHub Actions repo secret | Vercel env vars / `.env.local` |
-| Account | `github-actions-deploy@…` | `firebase-adminsdk-fbsvc@…` |
-| Scope | Hosting deploy only | Firestore read/write |
-
-The deploy account holds `firebasehosting.admin` and `firebase.viewer` and nothing else, so a leaked CI secret can't reach Firestore.
-
-To deploy Firebase manually:
+To deploy the static site manually:
 
 ```bash
 cd stephen-portfolio
@@ -123,9 +125,10 @@ portfolio/
 └── stephen-portfolio/
     ├── api/               # Vercel serverless functions + helpers
     ├── src/
-    │   ├── components/    # Navbar, Hero, About, Projects, Skills,
-    │   │                  # ProjectDiscovery, EmailDraftAssistant, Footer
-    │   ├── data/          # projects.js — project showcase content
+    │   ├── components/    # Navbar, Hero, About, Experience, Projects,
+    │   │                  # Skills, Credentials, ProjectDiscovery,
+    │   │                  # EmailDraftAssistant, MonicaAiDemo, Footer
+    │   ├── data/          # projects, experience, credentials, moments
     │   ├── hooks/         # useIsMobile
     │   └── services/      # aiService.js — API fetch wrappers
     └── public/

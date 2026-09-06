@@ -2,7 +2,7 @@
  * Stephen Agyemang's LinkedIn Profile Data
  *
  * Curated from public LinkedIn profile: linkedin.com/in/stephagyemang
- * Last updated: August 2026
+ * Last updated: September 2026
  */
 
 export function getLinkedInProfile() {
@@ -11,7 +11,7 @@ export function getLinkedInProfile() {
         headline: "Computer Science @ DePauw University | Honor Scholar & Bonner Scholar | Aspiring Software Engineer | AI/ML Researcher",
         location: "Greater Indianapolis",
         stats: "1K+ followers · 500+ connections",
-        summary: `Computer Science student at DePauw University with two serious technical focuses: backend software engineering and AI/ML/DL research. On the backend side, I'm actively exploring distributed systems, cloud infrastructure, REST APIs, Spring Boot, FastAPI, Docker, and Kubernetes. On the research side, I'm a DL/ML researcher diving deep into machine learning and deep learning. Tech and Design Lead for the Google Developer Group on campus, Aspire Leaders Program alumnus (Harvard, Cohort 4 '25), and a ColorStack student member. Beyond code, I'm a multi-disciplinary thinker — theatre, photography, soccer, piano, and guitar all have a place in my life too.`,
+        summary: `Computer Science student at DePauw University with two serious technical focuses: backend software engineering and AI/ML/DL research. On the backend side, I'm actively exploring distributed systems, cloud infrastructure, REST APIs, Spring Boot, FastAPI, Docker, and Kubernetes. On the research side, I spent summer 2026 as an undergraduate ML researcher on Transformer-based monocular 3D human pose estimation. Tech and Design Lead for the Google Developer Group on campus, Aspire Leaders Program alumnus (Harvard, Cohort 4 '25), and a ColorStack student member. Beyond code, I'm a multi-disciplinary thinker — theatre, photography, soccer, piano, and guitar all have a place in my life too, and Mathematics and Theatre are my intended minors.`,
 
         workExperience: [
             {
@@ -19,8 +19,8 @@ export function getLinkedInProfile() {
                 company: "DePauw University — Computer Science Department",
                 type: "Full-time · Hybrid",
                 location: "Greencastle, Indiana",
-                dates: "May 2026 – Present",
-                description: "Collaborate with a faculty researcher and two student researchers to train and evaluate Transformer-based PyTorch models for monocular 3D human pose estimation. Benchmark models, conduct ablation studies, and debug pipelines to validate architectural decisions and enhance experiment reliability. Review ML research, analyze large-scale motion-capture datasets, and evaluate models for browser deployment with ONNX Runtime."
+                dates: "May 2026 – August 2026",
+                description: "Collaborated with a faculty researcher and two student researchers to train and evaluate Transformer-based PyTorch models for monocular 3D human pose estimation. Benchmarked models, conducted ablation studies, and debugged pipelines to validate architectural decisions and enhance experiment reliability. Reviewed ML research, analyzed large-scale motion-capture datasets, and evaluated models for browser deployment with ONNX Runtime."
             },
             {
                 title: "IT Intern",
@@ -31,7 +31,7 @@ export function getLinkedInProfile() {
                 description: "Collaborated with users and IT staff to resolve hardware, software, account, and network issues through a ticketing system, guiding non-technical users through solutions."
             },
             {
-                title: "STEM Guide",
+                title: "STEM Guide / TA",
                 company: "DePauw University — Department of Computer Science",
                 type: "Part-time · On-site",
                 location: "Greencastle, Indiana",
@@ -43,22 +43,20 @@ export function getLinkedInProfile() {
                 company: "DePauw University",
                 type: "Part-time · On-site",
                 location: "Greencastle, Indiana",
-                dates: "January 2026 – Present",
-                description: "Serve as a personal student ambassador for prospective students during overnight campus visits. Introduce guests to both the academic and social life at DePauw, ensuring their safety and comfort while addressing their questions about the student experience."
+                dates: "January 2026 – May 2026",
+                description: "Served as a personal student ambassador for prospective students during overnight campus visits. Introduced guests to both the academic and social life at DePauw, ensuring their safety and comfort while addressing their questions about the student experience."
             },
         ],
 
         education: [
             {
                 school: "DePauw University",
-                degree: "Bachelor of Arts (BA) in Computer Science",
+                degree: "Bachelor of Arts (BA) in Computer Science — intended minors in Mathematics and Theatre (not yet declared)",
                 dates: "January 2025 – December 2028 (Expected)",
                 gpa: "3.97 / 4.0",
                 honors: ["Honor Scholar — DePauw's most prestigious academic track, selected through a competitive writing and interview process based on academic excellence and interdisciplinary thinking."],
                 activities: [
                     "Google Developers Group on Campus (Design Lead)",
-                    "DePauw International Student Association (former Student Leader)",
-                    "African Students Association (former Student Leader)",
                     "DePauw Futbol Club",
                     "DePauw WiCS"
                 ],
@@ -73,6 +71,10 @@ export function getLinkedInProfile() {
                     "Photography & Social Justice",
                     "Beginning Class Folk Guitar I",
                     "Beginning Class Piano",
+                    "Computer Systems (Fall 2026)",
+                    "Algorithmic Foundations of Computation (Fall 2026)",
+                    "Honor Scholar Seminar (Fall 2026)",
+                    "Mathematics (Fall 2026)",
                 ],
             },
             {

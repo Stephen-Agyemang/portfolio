@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 import { fetchGithubProjects } from "./githubFetcher.js";
 import { getLinkedInProfile } from "./linkedinProfile.js";
-import { getHandshakeProfile } from "./handshakeProfile.js";
 import { logChatMessage } from "./chatLogger.js";
 import { applyCors, isOriginAllowed, enforceRateLimit, rejectRateLimited, sanitizeProjects } from "./guards.js";
 
@@ -94,49 +93,10 @@ function buildLinkedInContext(profile) {
     return context;
 }
 
-/**
- * Build a readable context string from the Handshake profile data.
- */
-function buildHandshakeContext(profile) {
-    let context = `\n--- Handshake Profile ---\n`;
-    context += `University: ${profile.university}\n`;
-    context += `Major: ${profile.major}\n`;
-    context += `Graduation Year: ${profile.graduationYear}\n`;
-    context += `GPA: ${profile.gpa}\n`;
-    context += `Profile URL: ${profile.profileUrl}\n`;
-
-    if (profile.jobPreferences) {
-        const prefs = profile.jobPreferences;
-        context += `\nJob Preferences:\n`;
-        if (prefs.jobTypes?.length) context += `  Looking for: ${prefs.jobTypes.join(", ")}\n`;
-        if (prefs.workAuthorization) context += `  Work Authorization: ${prefs.workAuthorization}\n`;
-        context += `  Willing to Relocate: ${prefs.willingToRelocate ? "Yes" : "No"}\n`;
-        if (prefs.preferredLocations?.length) context += `  Preferred Locations: ${prefs.preferredLocations.join(", ")}\n`;
-    }
-
-    if (profile.careerInterests) {
-        const interests = profile.careerInterests;
-        if (interests.industries?.length) context += `\nTarget Industries: ${interests.industries.join(", ")}\n`;
-        if (interests.roles?.length) context += `Target Roles: ${interests.roles.join(", ")}\n`;
-    }
-
-    if (profile.skills?.length > 0) {
-        context += `\nHandshake Skills: ${profile.skills.join(", ")}\n`;
-    }
-
-    if (profile.eventsAttended?.length > 0) {
-        context += `\nCareer Events Attended:\n`;
-        profile.eventsAttended.forEach(event => {
-            context += `  - ${event.name} (${event.date}) — ${event.type}\n`;
-        });
-    }
-
-    if (profile.applicationHighlights?.length > 0) {
-        context += `\nNotable Applications: ${profile.applicationHighlights.join("; ")}\n`;
-    }
-
-    return context;
-}
+// Handshake context is parked. api/handshakeProfile.js still holds the data,
+// but the profile is no longer actively maintained, so LinkedIn is the single
+// source of truth for the assistant. To switch it back on, re-import
+// getHandshakeProfile and rebuild a context string here.
 
 function trimText(text, maxLength) {
     if (!text || typeof text !== "string") return "";
@@ -231,18 +191,17 @@ export default async function handler(req, res) {
                 ? await fetchGithubProjects()
                 : (contextBase?.githubProjects ?? []);
             const linkedInProfile = getLinkedInProfile();
-            const handshakeProfile = getHandshakeProfile();
 
             const stephenProfile = {
                 name: "Stephen Agyemang",
                 education: "Computer Science at DePauw University (3.97 GPA, Honor Scholar, Bonner Scholar, CodePath Fellow '26)",
-                background: "Ghanaian international student, Sophomore at DePauw University",
+                background: "Ghanaian international student, rising Junior at DePauw University",
+                currentSemester: "Fall 2026 — back on campus and focused on coursework: Mathematics, the Honor Scholar seminar, Computer Systems, and Algorithmic Foundations of Computation. The summer 2026 ML research position wrapped in August 2026.",
                 interests: ["Artificial Intelligence", "Machine Learning", "Mathematics", "Theatre & Acting", "Soccer", "Photography"],
-                bio: "Focuses on building scalable software and exploring the intersections of AI and ML. Multi-disciplinary enthusiast blending logic with creative expression. Minors in Theatre and Mathematics.",
+                bio: "Focuses on building scalable software and exploring the intersections of AI and ML. Multi-disciplinary enthusiast blending logic with creative expression. Mathematics and Theatre are his intended minors — not yet declared.",
                 links: {
                     linkedIn: "https://www.linkedin.com/in/stephagyemang",
-                    github: "https://github.com/Stephen-Agyemang",
-                    handshake: "https://app.joinhandshake.com/profiles/stephen_agyemang"
+                    github: "https://github.com/Stephen-Agyemang"
                     // portfolio link intentionally omitted for in-portfolio context
                 }
             };
@@ -250,18 +209,17 @@ export default async function handler(req, res) {
             const profileContext = `
                 About Stephen: ${stephenProfile.bio} Education: ${stephenProfile.education}. 
                 Origins: ${stephenProfile.background}. 
+                Right now: ${stephenProfile.currentSemester}
                 Interests: ${stephenProfile.interests.join(", ")}.
-                Links: LinkedIn (${stephenProfile.links.linkedIn}), GitHub (${stephenProfile.links.github}), Handshake (${stephenProfile.links.handshake})
+                Links: LinkedIn (${stephenProfile.links.linkedIn}), GitHub (${stephenProfile.links.github})
             `;
 
             const linkedInContext = buildLinkedInContext(linkedInProfile);
-            const handshakeContext = buildHandshakeContext(handshakeProfile);
 
             contextBase = {
                 githubProjects,
                 profileContext,
                 linkedInContext,
-                handshakeContext,
             };
 
             cachedPromptContext = {
@@ -281,7 +239,7 @@ export default async function handler(req, res) {
             model: "gpt-5.6-luna",
             messages: [
                 {
-                    role: "system", content: `You are Stephen Agyemang — a Ghanaian CS student at DePauw University, Honor Scholar and Bonner Scholar, undergraduate machine learning researcher, GDG Tech & Design Lead, CodePath grad, Harvard ALP '25 alumnus, and a ColorStack student member. You're talking to visitors on your personal portfolio website.
+                    role: "system", content: `You are Stephen Agyemang — a Ghanaian CS student at DePauw University, Honor Scholar and Bonner Scholar, undergraduate machine learning researcher over summer 2026, GDG Tech & Design Lead, CodePath grad, Harvard ALP '25 alumnus, and a ColorStack student member. You're talking to visitors on your personal portfolio website.
 
 Your personality: warm, grounded, occasionally witty, and genuinely excited about tech and people. You talk like a real person — not a LinkedIn bio, not a chatbot. Use contractions. Keep sentences short.
 
@@ -290,7 +248,7 @@ VOICE RULE — this is important:
 - For everything else (his projects, skills, experience, goals, opinions), speak in FIRST PERSON as Stephen. Example: "I built FridgeJam for the GDG Coding Jam — it lets you scan your fridge and get AI-generated recipes."
 - Never open with "I am Stephen" or "I'm Stephen" — it feels robotic and off.
 
-You have all your LinkedIn data, project details, and Handshake profile available as context below. Use it naturally, like you'd answer a friend's question — not like you're reading from a resume.
+You have all your LinkedIn data and project details available as context below. Use it naturally, like you'd answer a friend's question — not like you're reading from a resume.
 
 CORE RULES:
 
@@ -317,8 +275,8 @@ CORE RULES:
 9. Highlights you can share naturally when asked:
    - FridgeJam was featured at the very first GDG Coding Jam by GDG leadership — you were the first project ever demoed.
    - You're an Honor Scholar — DePauw's most selective academic track.
-   - 3.97 GPA, active DL/ML researcher.
-   - You play soccer, do theatre, photography, piano, and guitar — not just a coder.
+   - 3.97 GPA. You spent summer 2026 as an undergraduate ML researcher on Transformer-based monocular 3D human pose estimation — that position ended in August 2026. This fall you are back on campus focused on coursework: Mathematics, the Honor Scholar seminar, Computer Systems, and Algorithmic Foundations of Computation.
+   - You play soccer, do theatre and acting (Acting I & II, Voice and Movement at DePauw), photography, piano, and guitar — not just a coder. Mathematics and Theatre are your INTENDED minors; you have not declared them yet, so never call them your current minors.
    - Ghanaian, international student, first-gen adjacent — you've worked hard to be here.
    - You have two real technical focuses: (1) AI/ML/DL research and (2) Backend SWE. Backend means distributed systems, cloud infrastructure, REST APIs, Spring Boot, FastAPI, Docker, Kubernetes — you're actively exploring all of this. Don't lump it all under "full-stack" — backend is its own thing for you and you care about it seriously.
 
@@ -330,7 +288,7 @@ Then, ONLY if projects are relevant, add:
 ---PROJECTS---
 Project A, Project B`
                 },
-                { role: "user", content: `Context:\n${contextBase.profileContext}\n\n${contextBase.linkedInContext}\n\n${contextBase.handshakeContext}\n\nProjects:\n${projectContext}\n\nUser Message: "${userMessage}"` }
+                { role: "user", content: `Context:\n${contextBase.profileContext}\n\n${contextBase.linkedInContext}\n\nProjects:\n${projectContext}\n\nUser Message: "${userMessage}"` }
             ],
             max_completion_tokens: 220,
             stream: true,
