@@ -74,7 +74,7 @@ export function getLinkedInProfile() {
                     "Computer Systems (Fall 2026)",
                     "Algorithmic Foundations of Computation (Fall 2026)",
                     "Honor Scholar Seminar (Fall 2026)",
-                    "Mathematics (Fall 2026)",
+                    "Calculus II (Fall 2026)",
                 ],
             },
             {

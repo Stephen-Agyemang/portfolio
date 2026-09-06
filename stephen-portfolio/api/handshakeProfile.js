@@ -12,7 +12,9 @@ export function getHandshakeProfile() {
         university: "DePauw University",
         location: "Greencastle, IN",
         major: "Computer Science",
-        minors: ["Theatre", "Mathematics"],
+        // Intended, not declared. Kept accurate so re-enabling this source
+        // can never reintroduce the claim that these minors are official.
+        intendedMinors: ["Mathematics", "Theatre"],
         degree: "Bachelor of Liberal Arts",
         schoolYear: "Rising Junior",
         graduationYear: "2028",
